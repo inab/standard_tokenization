@@ -12,8 +12,8 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 
 
 @Entity
-@Table(name="chemicalcompound_sentence")
-public class ChemicalCompoundSentence {
+@Table(name="chemicalcompound_hepatotoxicityterm_sentence")
+public class HepatotoxicityTermChemicalCompoundSentence {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Integer id;
@@ -21,19 +21,24 @@ public class ChemicalCompoundSentence {
 	@ManyToOne
 	private ChemicalCompound chemicalCompound;
 	
+	@ManyToOne
+	private HepatotoxicityTerm hepatotoxicityTerm;
+	
+	private RelationRule relationRule;
+	
 	private Float score;
 	
 	private Integer quantity;
 	
-	@JsonIgnore
 	@ManyToOne
+	@JsonIgnore
 	private Sentence sentence;
 		
-
-	public ChemicalCompoundSentence() {}
+	public HepatotoxicityTermChemicalCompoundSentence() {}
 	
-	public ChemicalCompoundSentence(ChemicalCompound chemicalCompound, Float score, Integer quantity, Sentence sentence) {
+	public HepatotoxicityTermChemicalCompoundSentence(ChemicalCompound chemicalCompound, HepatotoxicityTerm hepatotoxicityTerm,Float score, Integer quantity, Sentence sentence) {
 		this.chemicalCompound = chemicalCompound;
+		this.hepatotoxicityTerm = hepatotoxicityTerm;
 		this.score = score;
 		this.quantity = quantity;
 		this.sentence = sentence;
@@ -79,4 +84,23 @@ public class ChemicalCompoundSentence {
 		this.sentence = sentence;
 	}
 
+	
+	public HepatotoxicityTerm getHepatotoxicityTerm() {
+		return hepatotoxicityTerm;
+	}
+
+	public void setHepatotoxicityTerm(HepatotoxicityTerm hepatotoxicityTerm) {
+		this.hepatotoxicityTerm = hepatotoxicityTerm;
+	}
+
+	public RelationRule getRelationRule() {
+		return relationRule;
+	}
+
+	public void setRelationRule(RelationRule relationRule) {
+		this.relationRule = relationRule;
+	}
+
+	
+	
 }

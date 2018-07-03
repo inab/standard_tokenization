@@ -11,20 +11,19 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 import org.springframework.stereotype.Repository;
 
-import es.bsc.inb.limtox.daos.ChemicalCompoundDao;
-import es.bsc.inb.limtox.model.ChemicalCompound;
-@Repository(value="chemicalCompoundDaoJSONImpl")
-public class ChemicalCompoundDaoJSONImpl extends GenericDaoJSONImpl<ChemicalCompound> implements ChemicalCompoundDao{
-	
+import es.bsc.inb.limtox.daos.MarkerDao;
+import es.bsc.inb.limtox.model.Marker;
+@Repository(value="markerDaoJSONImpl")
+public class MarkerDaoJSONImpl extends GenericDaoJSONImpl<Marker> implements MarkerDao{
 	@Override
-    public List<ChemicalCompound> findAll() {
+    public List<Marker> findAll() {
     	ObjectMapper mapper = new ObjectMapper();
     	mapper.configure(Feature.ALLOW_NON_NUMERIC_NUMBERS, true);
 		try {
-			String json_string = unzipDictionary(env.getProperty("limtox.dictionary.chemical_entity"));
+			String json_string = unzipDictionary(env.getProperty("limtox.dictionary.liver_marker"));
 			JsonNode rootNode = mapper.readTree(json_string);
-			JsonNode data = rootNode.path("chemical_entity");
-			List<ChemicalCompound> myObjects = mapper.readValue(data, new TypeReference<List<ChemicalCompound>>(){});
+			JsonNode data = rootNode.path("liver_marker");
+			List<Marker> myObjects = mapper.readValue(data, new TypeReference<List<Marker>>(){});
 			return myObjects;
 		} catch (JsonParseException e) {
 			// TODO Auto-generated catch block
@@ -38,11 +37,5 @@ public class ChemicalCompoundDaoJSONImpl extends GenericDaoJSONImpl<ChemicalComp
 		}
 		return null;
     }
-
-	@Override
-	public ChemicalCompound save(ChemicalCompound t) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 }

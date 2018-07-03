@@ -1,7 +1,6 @@
 package es.bsc.inb.limtox.daos.json;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
 
 import org.codehaus.jackson.JsonNode;
@@ -13,11 +12,10 @@ import org.springframework.stereotype.Repository;
 
 import es.bsc.inb.limtox.daos.HepatotoxicityTermDao;
 import es.bsc.inb.limtox.model.HepatotoxicityTerm;
-@Repository
+@Repository(value="hepatotoxicityTermDaoJSONImpl")
 public class HepatotoxicityTermDaoJSONImpl extends GenericDaoJSONImpl<HepatotoxicityTerm> implements HepatotoxicityTermDao{
-
 	
-    @Override
+	@Override
     public List<HepatotoxicityTerm> findAll() {
     	ObjectMapper mapper = new ObjectMapper();
 		try {
@@ -39,9 +37,4 @@ public class HepatotoxicityTermDaoJSONImpl extends GenericDaoJSONImpl<Hepatotoxi
 		return null;
     }
 
-	@Override
-	public HashMap<String, HepatotoxicityTerm> findAllAsHash() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 }

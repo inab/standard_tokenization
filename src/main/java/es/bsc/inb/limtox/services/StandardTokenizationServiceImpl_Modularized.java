@@ -32,13 +32,13 @@ import es.bsc.inb.limtox.daos.DocumentDao;
 import es.bsc.inb.limtox.exceptions.MoreThanOneEntityException;
 import es.bsc.inb.limtox.model.ChemicalCompound;
 import es.bsc.inb.limtox.model.ChemicalCompoundCytochromeSentence;
-import es.bsc.inb.limtox.model.ChemicalCompoundHepatotoxicityTermPattern;
 import es.bsc.inb.limtox.model.ChemicalCompoundSentence;
 import es.bsc.inb.limtox.model.Cytochrome;
 import es.bsc.inb.limtox.model.CytochromeChemicalCompoundInductionPattern;
 import es.bsc.inb.limtox.model.CytochromeChemicalCompoundInhibitionPattern;
 import es.bsc.inb.limtox.model.CytochromeChemicalCompoundPattern;
 import es.bsc.inb.limtox.model.CytochromeSentence;
+import es.bsc.inb.limtox.model.Document;
 import es.bsc.inb.limtox.model.HepatotoxicityTerm;
 import es.bsc.inb.limtox.model.HepatotoxicityTermChemicalCompoundSentence;
 import es.bsc.inb.limtox.model.HepatotoxicityTermSentence;
@@ -53,8 +53,8 @@ import es.bsc.inb.limtox.util.CoreNLP;
 import es.bsc.inb.limtox.util.StringUtil;
 
 
-@Service
-public class StandardTokenizationServiceImpl {
+//@Service
+public class StandardTokenizationServiceImpl_Modularized {
 
 	@Autowired
 	@Qualifier("documentJSONDao")
@@ -64,7 +64,7 @@ public class StandardTokenizationServiceImpl {
 	@Autowired
 	private SectionService sectionService;
 	protected Log log = LogFactory.getLog(this.getClass());
-	@Transactional
+	@Transactional()
 	public void execute(String sourceId, String file_path) {
 		try {
 			StanfordCoreNLP pipeline = CoreNLP.getStandfordCoreNLP();
@@ -94,6 +94,7 @@ public class StandardTokenizationServiceImpl {
 					section=sectionService.getSections().get(sentence_text_original);
 				}else {
 					
+					
 					//Set the chemical compounds present into the sentence
 					findChemicalCompounds(sentence_model, sentence_text);
 					//Set the hepatotoxicity terms present into the sentence
@@ -109,17 +110,16 @@ public class StandardTokenizationServiceImpl {
 					//Find relations between chemical compounds and Cytochromes  in the sentence
 					findChemicalCompoundCytochromeRelations(sentence_model, sentence_text);
 					
-					//Find relations between chemical compounds and Markers  in the sentence
 					findMarkerChemicalCompoundRelations(sentence_model, sentence_text);
+					
 					
 				}
 				if(sentence_model!=null && (sentence_model.getChemicalCompoundSentences().size()>0 || 
 						sentence_model.getHepatotoxicityTermSentences().size()>0 ||
 						sentence_model.getCytochromeSentences().size()>0 ||
-						sentence_model.getMarkerSentences().size()>0 ||
 						sentence_model.getChemicalCompoundCytochromeSentences().size()>0 ||
-						sentence_model.getMarkerChemicalCompoundSentences().size()>0 ||
-						sentence_model.getHepatotoxicityTermChemicalCompoundSentences().size()>0)) {
+						sentence_model.getMarkerSentences().size()>0 ||
+						sentence_model.getMarkerChemicalCompoundSentences().size()>0)) {
 						document_model.getSentences().add(sentence_model);
 				}
 			}
@@ -197,57 +197,64 @@ public class StandardTokenizationServiceImpl {
 	 * @param tokens
 	 */
 	private void findChemicalCompoundCytochromeRelations(Sentence sentence, String sentence_text) {
-		for (ChemicalCompoundSentence chemicalCompoundSentence : sentence.getChemicalCompoundSentences()) {
-			for (CytochromeSentence cytochromeSentence : sentence.getCytochromeSentences()) {
-				ChemicalCompoundCytochromeSentence chemicalCompoundCytochromeSentence = new ChemicalCompoundCytochromeSentence(chemicalCompoundSentence.getChemicalCompound(), cytochromeSentence.getCytochrome(),1f, 1, sentence);
-				sentence.getChemicalCompoundCytochromeSentences().add(chemicalCompoundCytochromeSentence);
-				chemicalCompoundCytochromeSentence.setRelationRule(RelationRule.COMENTION);
-				Boolean cut = false;
-				//Aca si leemos los patterns de induccion.
-				for (CytochromeChemicalCompoundInductionPattern pattern : dictionaryService.getCytochromeChemicalCompoundInductionPatterns()) {
-					String pattern_text = pattern.getCyp_induction_pattern();
-					pattern_text = pattern_text.replace("[SUBSTANCE]", chemicalCompoundSentence.getChemicalCompound().getName());
-					pattern_text = pattern_text.replace("[P450_CYPS]", cytochromeSentence.getCytochrome().getName());
-					int quantity_pattern = sentenceContains(pattern_text, sentence_text);
-					if(quantity_pattern!=0) {
-						chemicalCompoundCytochromeSentence.setRelationRule(RelationRule.INDUCTION);
-						cut=true;
-						break;
-					}
-				}
-				//Aca si leemos los patterns de inhibicion.
-				if(!cut) {
-					for (CytochromeChemicalCompoundInhibitionPattern pattern : dictionaryService.getCytochromeChemicalCompoundInhibitionPatterns()) {
-						String pattern_text = pattern.getCyp_inhibition_pattern();
-						pattern_text = pattern_text.replace("[SUBSTANCE]", chemicalCompoundSentence.getChemicalCompound().getName());
-						pattern_text = pattern_text.replace("[P450_CYPS]", cytochromeSentence.getCytochrome().getName());
-						int quantity_pattern = sentenceContains(pattern_text, sentence_text);
-						if(quantity_pattern!=0) {
-							chemicalCompoundCytochromeSentence.setRelationRule(RelationRule.INHIBITION);
-							cut=true;
-							break;
+		for (ChemicalCompound chemicalCompound : dictionaryService.getChemicalCompounds()) {
+			int quantity_compound = sentenceContains(chemicalCompound.getName(), sentence_text);
+			if(quantity_compound!=0) {
+				//compound found, now look for Cysp
+				for (Cytochrome cytochrome : dictionaryService.getCytochromes()) {
+					int quantity_cys = sentenceContains(cytochrome.getName(), sentence_text);
+					if(quantity_cys!=0) {
+						ChemicalCompoundCytochromeSentence chemicalCompoundCytochromeSentence = new ChemicalCompoundCytochromeSentence(chemicalCompound, cytochrome,1f, quantity_cys, sentence);
+						sentence.getChemicalCompoundCytochromeSentences().add(chemicalCompoundCytochromeSentence);
+						chemicalCompoundCytochromeSentence.setRelationRule(RelationRule.COMENTION);
+						Boolean cut = false;
+						//Aca si leemos los patterns de induccion.
+						for (CytochromeChemicalCompoundInductionPattern pattern : dictionaryService.getCytochromeChemicalCompoundInductionPatterns()) {
+							String pattern_text = pattern.getCyp_induction_pattern();
+							pattern_text = pattern_text.replace("[SUBSTANCE]", chemicalCompound.getName());
+							pattern_text = pattern_text.replace("[P450_CYPS]", cytochrome.getName());
+							int quantity_pattern = sentenceContains(pattern_text, sentence_text);
+							if(quantity_pattern!=0) {
+								chemicalCompoundCytochromeSentence.setRelationRule(RelationRule.INDUCTION);
+								cut=true;
+								break;
+							}
 						}
-					}
-				}
-				//Aca si leemos los patterns de metabolismo.
-				if(!cut) {
-					for (CytochromeChemicalCompoundPattern pattern : dictionaryService.getCytochromeChemicalCompoundPatterns()) {
-						String pattern_text = pattern.getSubstrate_pattern();
-						pattern_text = pattern_text.replace("[SUBSTANCE]", chemicalCompoundSentence.getChemicalCompound().getName());
-						pattern_text = pattern_text.replace("[P450_CYPS]", cytochromeSentence.getCytochrome().getName());
-						int quantity_pattern = sentenceContains(pattern_text, sentence_text);
-						if(quantity_pattern!=0) {
-							chemicalCompoundCytochromeSentence.setRelationRule(RelationRule.METABOLISM);
-							cut=true;
-							break;
+						//Aca si leemos los patterns de inhibicion.
+						if(!cut) {
+							for (CytochromeChemicalCompoundInhibitionPattern pattern : dictionaryService.getCytochromeChemicalCompoundInhibitionPatterns()) {
+								String pattern_text = pattern.getCyp_inhibition_pattern();
+								pattern_text = pattern_text.replace("[SUBSTANCE]", chemicalCompound.getName());
+								pattern_text = pattern_text.replace("[P450_CYPS]", cytochrome.getName());
+								int quantity_pattern = sentenceContains(pattern_text, sentence_text);
+								if(quantity_pattern!=0) {
+									chemicalCompoundCytochromeSentence.setRelationRule(RelationRule.INHIBITION);
+									cut=true;
+									break;
+								}
+							}
 						}
+						//Aca si leemos los patterns de metabolismo.
+						if(!cut) {
+							for (CytochromeChemicalCompoundPattern pattern : dictionaryService.getCytochromeChemicalCompoundPatterns()) {
+								String pattern_text = pattern.getSubstrate_pattern();
+								pattern_text = pattern_text.replace("[SUBSTANCE]", chemicalCompound.getName());
+								pattern_text = pattern_text.replace("[P450_CYPS]", cytochrome.getName());
+								int quantity_pattern = sentenceContains(pattern_text, sentence_text);
+								if(quantity_pattern!=0) {
+									chemicalCompoundCytochromeSentence.setRelationRule(RelationRule.METABOLISM);
+									cut=true;
+									break;
+								}
+							}
+						}	
+						//Otra opcion seria verificar si entre medio hay palabras claves ... induction induce etc
+						//Save Comention Compound and Cysp
+						System.out.println("relation compound-cys: " + chemicalCompound.getName() + " and " + cytochrome.getName());
 					}
 				}	
-				//Otra opcion seria verificar si entre medio hay palabras claves ... induction induce etc
-				//Save Comention Compound and Cysp
-				System.out.println("relation compound-cys: " + chemicalCompoundSentence.getChemicalCompound().getName() + " and " + cytochromeSentence.getCytochrome().getName());
 			}
-		}
+		}	
 	}
 
 	/**
@@ -264,22 +271,26 @@ public class StandardTokenizationServiceImpl {
 				HepatotoxicityTermChemicalCompoundSentence hepatotoxicityTermChemicalCompoundSentence = 
 						new HepatotoxicityTermChemicalCompoundSentence(chemicalCompoundSentence.getChemicalCompound(), hepatotoxicityTermSentence.getHepatotoxicityTerm(),1f, 1, sentence);
 				sentence.getHepatotoxicityTermChemicalCompoundSentences().add(hepatotoxicityTermChemicalCompoundSentence);
-				hepatotoxicityTermChemicalCompoundSentence.setRelationRule(RelationRule.COMENTION);
-				for (ChemicalCompoundHepatotoxicityTermPattern pattern : dictionaryService.getChemicalCompoundHepatotoxicityTermPatterns()) {
-					String pattern_text = pattern.getAdverse_pattern();
-					pattern_text = pattern_text.replace("[SUBSTANCE]", chemicalCompoundSentence.getChemicalCompound().getName());
-					pattern_text = pattern_text.replace("[ADVERSE_EFFECT]", hepatotoxicityTermSentence.getHepatotoxicityTerm().getTerm());
-					int quantity_pattern = sentenceContains(pattern_text, sentence_text);
-					if(quantity_pattern!=0) {
-						hepatotoxicityTermChemicalCompoundSentence.setRelationRule(RelationRule.ADVERSE_EFFECT);
-						break;
-					}
-				}
-				
+				//Save Comention Compound and Hepatotoxicityterm
 				System.out.println("relation compound-hepatotoxicityterm: " + chemicalCompoundSentence.getChemicalCompound().getName() + " and " + hepatotoxicityTermSentence.getHepatotoxicityTerm().getTerm());
 			}	
 			
-		}	
+		}
+		/*for (HepatotoxicityTerm hepatotoxicityTerm : dictionaryService.getHepatotoxicityTerms()) {
+			int quantity_term = sentenceContains(hepatotoxicityTerm.getTerm(), sentence_text);
+			if(quantity_term!=0) {
+				//marker found, now look for chemical compound
+				for (ChemicalCompound chemicalCompound : dictionaryService.getChemicalCompounds()) {
+					int quantity_comp = sentenceContains(chemicalCompound.getName(), sentence_text);
+					if(quantity_comp!=0) {
+						HepatotoxicityTermChemicalCompoundSentence hepatotoxicityTermChemicalCompoundSentence = new HepatotoxicityTermChemicalCompoundSentence(chemicalCompound, hepatotoxicityTerm,1f, quantity_comp, sentence);
+						sentence.getHepatotoxicityTermChemicalCompoundSentences().add(hepatotoxicityTermChemicalCompoundSentence);
+						//Save Comention Compound and Hepatotoxicityterm
+						System.out.println("relation compound-hepatotoxicityterm: " + chemicalCompound.getName() + " and " + hepatotoxicityTerm.getTerm());
+					}
+				}	
+			}
+		}*/	
 	}
 	
 	/**
@@ -291,15 +302,21 @@ public class StandardTokenizationServiceImpl {
 	 * @param tokens
 	 */
 	private void findMarkerChemicalCompoundRelations(Sentence sentence, String sentence_text) {
-		for (MarkerSentence markerSentence : sentence.getMarkerSentences()) {
-			for (ChemicalCompoundSentence chemicalCompoundSentence : sentence.getChemicalCompoundSentences()) {
-				MarkerChemicalCompoundSentence markerChemicalCompoundSentence = 
-							new MarkerChemicalCompoundSentence(chemicalCompoundSentence.getChemicalCompound(), markerSentence.getMarker(),1f, 1, sentence);
-				sentence.getMarkerChemicalCompoundSentences().add(markerChemicalCompoundSentence);
-				//Save Comention Compound and Cysp
-				System.out.println("relation compound-marker: " + chemicalCompoundSentence.getChemicalCompound().getName() + " and " + markerSentence.getMarker().getMarker_full_name());
-			}	
-		}
+		for (Marker marker : dictionaryService.getMarkers()) {
+			int quantity_marker = sentenceContains(marker.getMarker_full_name(), sentence_text);
+			if(quantity_marker!=0) {
+				//marker found, now look for chemical compound
+				for (ChemicalCompound chemicalCompound : dictionaryService.getChemicalCompounds()) {
+					int quantity_comp = sentenceContains(chemicalCompound.getName(), sentence_text);
+					if(quantity_comp!=0) {
+						MarkerChemicalCompoundSentence markerChemicalCompoundSentence = new MarkerChemicalCompoundSentence(chemicalCompound, marker,1f, quantity_comp, sentence);
+						sentence.getMarkerChemicalCompoundSentences().add(markerChemicalCompoundSentence);
+						//Save Comention Compound and Cysp
+						System.out.println("relation compound-marker: " + chemicalCompound.getName() + " and " + marker.getMarker_full_name());
+					}
+				}	
+			}
+		}	
 	}
 	
 	/**

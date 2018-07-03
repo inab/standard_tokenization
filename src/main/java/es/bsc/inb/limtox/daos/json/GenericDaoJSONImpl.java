@@ -19,7 +19,7 @@ import es.bsc.inb.limtox.daos.GenericDao;
 import es.bsc.inb.limtox.model.LimtoxEntity;
 
 @PropertySource({ "classpath:limtox.properties" })
-@Repository
+@Repository(value="genericDaoJSONImpl")
 public abstract class GenericDaoJSONImpl<T extends LimtoxEntity> implements GenericDao<T> {
 	
 	@Autowired
@@ -42,16 +42,17 @@ public abstract class GenericDaoJSONImpl<T extends LimtoxEntity> implements Gene
 		try{
 			FileInputStream in = new FileInputStream(file_path);
 			GZIPInputStream gis = new GZIPInputStream(in);
-		    BufferedReader bf = new BufferedReader(new InputStreamReader(gis, "UTF-8"));
-		    String outStr = "";
+			//String s = IOUtils.toString(gis);
+			BufferedReader bf = new BufferedReader(new InputStreamReader(gis, "UTF-8"));
+		    StringBuilder textBuilder = new StringBuilder();
 		    String line;
 		    while ((line=bf.readLine())!=null) {
-		      outStr += line;
+		    	textBuilder.append(line);
 		    }
 		    bf.close();
 		    gis.close();
 		    in.close();
-		    return outStr;
+		    return textBuilder.toString();
 	    }catch(IOException ex){
 	       ex.printStackTrace();   
 	    }
@@ -85,10 +86,11 @@ public abstract class GenericDaoJSONImpl<T extends LimtoxEntity> implements Gene
     	return null;   
     }
     
-    @Override
-    public T save(final T t) {
+	@Override
+    public T save(final T document) {
     	return null;
     }
+    
 	
 
 }

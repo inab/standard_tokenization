@@ -12,14 +12,14 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 
 
 @Entity
-@Table(name="chemicalcompound_sentence")
-public class ChemicalCompoundSentence {
+@Table(name="marker_sentence")
+public class MarkerSentence {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Integer id;
 	
 	@ManyToOne
-	private ChemicalCompound chemicalCompound;
+	private Marker marker;
 	
 	private Float score;
 	
@@ -30,10 +30,10 @@ public class ChemicalCompoundSentence {
 	private Sentence sentence;
 		
 
-	public ChemicalCompoundSentence() {}
+	public MarkerSentence() {}
 	
-	public ChemicalCompoundSentence(ChemicalCompound chemicalCompound, Float score, Integer quantity, Sentence sentence) {
-		this.chemicalCompound = chemicalCompound;
+	public MarkerSentence(Marker marker, Float score, Integer quantity, Sentence sentence) {
+		this.marker = marker;
 		this.score = score;
 		this.quantity = quantity;
 		this.sentence = sentence;
@@ -47,12 +47,14 @@ public class ChemicalCompoundSentence {
 		this.id = id;
 	}
 
-	public ChemicalCompound getChemicalCompound() {
-		return chemicalCompound;
+	
+	
+	public Marker getMarker() {
+		return marker;
 	}
 
-	public void setChemicalCompound(ChemicalCompound chemicalCompound) {
-		this.chemicalCompound = chemicalCompound;
+	public void setMarker(Marker marker) {
+		this.marker = marker;
 	}
 
 	public Float getScore() {

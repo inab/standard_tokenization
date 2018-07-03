@@ -1,4 +1,4 @@
-package es.bsc.inb.limtox.daos;
+package es.bsc.inb.limtox.daos.jpa;
 
 import java.util.List;
 
@@ -6,10 +6,11 @@ import javax.persistence.Query;
 
 import org.springframework.stereotype.Repository;
 
+import es.bsc.inb.limtox.daos.DocumentDao;
 import es.bsc.inb.limtox.exceptions.MoreThanOneEntityException;
 import es.bsc.inb.limtox.model.Document;
-@Repository
-public class DocumentDaoImpl extends GenericDaoImpl<Document> implements DocumentDao{
+@Repository(value="documentDaoJPAImpl")
+public class DocumentDaoJPAImpl extends GenericDaoJPAImpl<Document> implements DocumentDao{
 
 	@Override
 	@SuppressWarnings("unchecked")

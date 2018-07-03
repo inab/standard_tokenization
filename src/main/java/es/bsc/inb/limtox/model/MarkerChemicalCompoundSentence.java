@@ -12,8 +12,8 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 
 
 @Entity
-@Table(name="chemicalcompound_sentence")
-public class ChemicalCompoundSentence {
+@Table(name="chemicalcompound_marker_sentence")
+public class MarkerChemicalCompoundSentence {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Integer id;
@@ -21,19 +21,24 @@ public class ChemicalCompoundSentence {
 	@ManyToOne
 	private ChemicalCompound chemicalCompound;
 	
+	@ManyToOne
+	private Marker marker;
+	
+	private RelationRule relationRule;
+	
 	private Float score;
 	
 	private Integer quantity;
 	
-	@JsonIgnore
 	@ManyToOne
+	@JsonIgnore
 	private Sentence sentence;
 		
-
-	public ChemicalCompoundSentence() {}
+	public MarkerChemicalCompoundSentence() {}
 	
-	public ChemicalCompoundSentence(ChemicalCompound chemicalCompound, Float score, Integer quantity, Sentence sentence) {
+	public MarkerChemicalCompoundSentence(ChemicalCompound chemicalCompound, Marker marker,Float score, Integer quantity, Sentence sentence) {
 		this.chemicalCompound = chemicalCompound;
+		this.marker = marker;
 		this.score = score;
 		this.quantity = quantity;
 		this.sentence = sentence;
@@ -78,5 +83,24 @@ public class ChemicalCompoundSentence {
 	public void setSentence(Sentence sentence) {
 		this.sentence = sentence;
 	}
+	
 
+	public Marker getMarker() {
+		return marker;
+	}
+
+	public void setMarker(Marker marker) {
+		this.marker = marker;
+	}
+
+	public RelationRule getRelationRule() {
+		return relationRule;
+	}
+
+	public void setRelationRule(RelationRule relationRule) {
+		this.relationRule = relationRule;
+	}
+
+	
+	
 }

@@ -1,4 +1,4 @@
-package es.bsc.inb.limtox.daos;
+package es.bsc.inb.limtox.daos.jpa;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -12,11 +12,13 @@ import javax.persistence.PersistenceContext;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import es.bsc.inb.limtox.daos.GenericDao;
 import es.bsc.inb.limtox.model.LimtoxEntity;
 
-@Repository
+
 @Transactional(readOnly=false)
-public abstract class GenericDaoImpl<T extends LimtoxEntity> implements GenericDao<T> {
+@Repository(value="genericDaoJPAImpl")
+public abstract class GenericDaoJPAImpl<T extends LimtoxEntity> implements GenericDao<T> {
 
     @PersistenceContext(unitName="modelPersistenceUnit")
     protected EntityManager em;
@@ -24,7 +26,7 @@ public abstract class GenericDaoImpl<T extends LimtoxEntity> implements GenericD
     private Class<T> type;
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-	public GenericDaoImpl() {
+	public GenericDaoJPAImpl() {
         Type t = getClass().getGenericSuperclass();
         ParameterizedType pt = (ParameterizedType) t;
         type = (Class) pt.getActualTypeArguments()[0];

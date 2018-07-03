@@ -12,9 +12,10 @@ public class CoreNLP {
 		if (pipeline == null) {
 			Properties props = new Properties();
 		    // set the list of annotators to run
-		    props.setProperty("annotators", "tokenize, ssplit");
-		    //props.setProperty("customAnnotatorClass.chemicalEntityCompound", "es.bsc.inb.limtox.annotators.ChemicalCompoundAnnotator");
+		    props.setProperty("annotators", "tokenize,ssplit");
 		    //props.setProperty("annotators", "tokenize, ssplit, pos, lemma, ner, parse, dcoref");
+		    //props.setProperty("customAnnotatorClass.chemicalEntityCompound", "es.bsc.inb.limtox.annotators.ChemicalCompoundAnnotator");
+		    
 		    // build pipeline
 		    //props.setProperty("tokenize.whitespace", "true");
 		    pipeline = new StanfordCoreNLP(props);

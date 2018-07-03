@@ -7,8 +7,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+
 @Entity
 @Table(name="cytochrome")
+@JsonIgnoreProperties(ignoreUnknown=true)
 public class Cytochrome implements LimtoxEntity{
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)

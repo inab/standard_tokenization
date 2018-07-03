@@ -1,8 +1,5 @@
 package es.bsc.inb.limtox.main;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import es.bsc.inb.limtox.config.AppConfig;

@@ -7,6 +7,10 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
+
+
+
 @Entity
 @Table(name="chemicalcompound_cytochrome_sentence")
 public class ChemicalCompoundCytochromeSentence {
@@ -20,11 +24,14 @@ public class ChemicalCompoundCytochromeSentence {
 	@ManyToOne
 	private Cytochrome cytochrome;
 	
+	private RelationRule relationRule;
+	
 	private Float score;
 	
 	private Integer quantity;
 	
 	@ManyToOne
+	@JsonIgnore
 	private Sentence sentence;
 		
 	public ChemicalCompoundCytochromeSentence() {}
@@ -83,6 +90,14 @@ public class ChemicalCompoundCytochromeSentence {
 
 	public void setCytochrome(Cytochrome cytochrome) {
 		this.cytochrome = cytochrome;
+	}
+
+	public RelationRule getRelationRule() {
+		return relationRule;
+	}
+
+	public void setRelationRule(RelationRule relationRule) {
+		this.relationRule = relationRule;
 	}
 
 	

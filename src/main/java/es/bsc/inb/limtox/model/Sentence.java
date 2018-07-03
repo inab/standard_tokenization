@@ -12,12 +12,16 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
+
+
 @Entity
 @Table(name="sentence")
 public class Sentence implements LimtoxEntity {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Integer id;
+	@JsonIgnore
 	@ManyToOne
 	private Document document;
 	
@@ -40,10 +44,23 @@ public class Sentence implements LimtoxEntity {
 	mappedBy = "sentence", orphanRemoval = true)
 	private List<CytochromeSentence> cytochromeSentences = new ArrayList<CytochromeSentence>();
 	
+	
+	@OneToMany(cascade = CascadeType.ALL, 
+	mappedBy = "sentence", orphanRemoval = true)
+	private List<MarkerSentence> markerSentences = new ArrayList<MarkerSentence>();
+	
 	@OneToMany(cascade = CascadeType.ALL, 
 	mappedBy = "sentence", orphanRemoval = true)
 	private List<ChemicalCompoundCytochromeSentence> chemicalCompoundCytochromeSentences = new ArrayList<ChemicalCompoundCytochromeSentence>();
 
+	@OneToMany(cascade = CascadeType.ALL, 
+	mappedBy = "sentence", orphanRemoval = true)
+	private List<HepatotoxicityTermChemicalCompoundSentence> hepatotoxicityTermChemicalCompoundSentences = new ArrayList<HepatotoxicityTermChemicalCompoundSentence>();
+	
+	@OneToMany(cascade = CascadeType.ALL, 
+	mappedBy = "sentence", orphanRemoval = true)
+	private List<MarkerChemicalCompoundSentence> markerChemicalCompoundSentences = new ArrayList<MarkerChemicalCompoundSentence>();
+	
 	public Sentence() {}
 	
 	public Sentence(Document document, String text, Section section) {
@@ -118,8 +135,31 @@ public class Sentence implements LimtoxEntity {
 		this.chemicalCompoundCytochromeSentences = chemicalCompoundCytochromeSentences;
 	}
 
-	
-	
-	
+	public List<MarkerSentence> getMarkerSentences() {
+		return markerSentences;
+	}
 
+	public void setMarkerSentences(List<MarkerSentence> markerSentences) {
+		this.markerSentences = markerSentences;
+	}
+
+	public List<MarkerChemicalCompoundSentence> getMarkerChemicalCompoundSentences() {
+		return markerChemicalCompoundSentences;
+	}
+
+	public void setMarkerChemicalCompoundSentences(List<MarkerChemicalCompoundSentence> markerChemicalCompoundSentences) {
+		this.markerChemicalCompoundSentences = markerChemicalCompoundSentences;
+	}
+
+	public List<HepatotoxicityTermChemicalCompoundSentence> getHepatotoxicityTermChemicalCompoundSentences() {
+		return hepatotoxicityTermChemicalCompoundSentences;
+	}
+
+	public void setHepatotoxicityTermChemicalCompoundSentences(
+			List<HepatotoxicityTermChemicalCompoundSentence> hepatotoxicityTermChemicalCompoundSentences) {
+		this.hepatotoxicityTermChemicalCompoundSentences = hepatotoxicityTermChemicalCompoundSentences;
+	}
+
+	
+	
 }

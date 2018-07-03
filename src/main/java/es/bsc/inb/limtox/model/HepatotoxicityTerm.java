@@ -9,16 +9,22 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.codehaus.jackson.annotate.JsonProperty;
+
 @Entity
 @Table(name="hepatotoxkeyword")
+@JsonIgnoreProperties(ignoreUnknown=true)
 public class HepatotoxicityTerm implements LimtoxEntity {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Integer id;
 	@Column(name="term")
+	@JsonProperty("original_entry")
 	private String term;
 	@Column(name="norm")
+	@JsonProperty("stemmed_entry")
 	private String norm;
 	@Column(name="pos")
 	private String posTag;

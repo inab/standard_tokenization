@@ -14,8 +14,8 @@ import es.bsc.inb.limtox.daos.CytochromeChemicalCompoundPatternDao;
 import es.bsc.inb.limtox.model.CytochromeChemicalCompoundPattern;
 
 
-@Repository
-public class CytochromeChemicalCompoundPatternDaoImpl extends GenericDaoJSONImpl<CytochromeChemicalCompoundPattern> implements CytochromeChemicalCompoundPatternDao {
+@Repository(value="cytochromeChemicalCompoundPatternDaoJSONImpl")
+public class CytochromeChemicalCompoundPatternDaoJSONImpl extends GenericDaoJSONImpl<CytochromeChemicalCompoundPattern> implements CytochromeChemicalCompoundPatternDao {
 
 	/**
 	 * 

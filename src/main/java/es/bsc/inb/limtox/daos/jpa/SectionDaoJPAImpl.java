@@ -1,13 +1,14 @@
-package es.bsc.inb.limtox.daos;
+package es.bsc.inb.limtox.daos.jpa;
 
 import java.util.Collection;
 import java.util.HashMap;
 
 import org.springframework.stereotype.Repository;
 
+import es.bsc.inb.limtox.daos.SectionDao;
 import es.bsc.inb.limtox.model.Section;
-@Repository
-public class SectionDaoImpl extends GenericDaoImpl<Section> implements SectionDao{
+@Repository(value="sectionDaoJPAImpl")
+public class SectionDaoJPAImpl extends GenericDaoJPAImpl<Section> implements SectionDao{
 
 	@Override
     @SuppressWarnings("unchecked")
