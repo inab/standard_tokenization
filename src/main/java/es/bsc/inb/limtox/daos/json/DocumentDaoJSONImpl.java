@@ -18,7 +18,8 @@ public class DocumentDaoJSONImpl extends GenericDaoJSONImpl<Document> implements
     public Document save(Document document) {
 		ObjectMapper objectMapper = new ObjectMapper();
 		try {
-			objectMapper.writeValue(new File("/home/jcorvi/text_mining_data_test/pubmed_data/findings/baseline/1/"+document.getSourceId()+".json"), document);
+			String path = env.getProperty("limtox.input.folder");
+			objectMapper.writeValue(new File(path+"pubmed_data/findings/baseline/1/"+document.getSourceId()+".json"), document);
 		} catch (JsonGenerationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
