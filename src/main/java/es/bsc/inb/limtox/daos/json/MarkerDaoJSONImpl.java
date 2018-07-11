@@ -1,15 +1,16 @@
 package es.bsc.inb.limtox.daos.json;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.JsonParser.Feature;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.type.TypeReference;
 import org.springframework.stereotype.Repository;
+
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonParser.Feature;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import es.bsc.inb.limtox.daos.MarkerDao;
 import es.bsc.inb.limtox.model.Marker;
@@ -17,13 +18,13 @@ import es.bsc.inb.limtox.model.Marker;
 public class MarkerDaoJSONImpl extends GenericDaoJSONImpl<Marker> implements MarkerDao{
 	@Override
     public List<Marker> findAll() {
-    	ObjectMapper mapper = new ObjectMapper();
+		ObjectMapper mapper = new ObjectMapper();
     	mapper.configure(Feature.ALLOW_NON_NUMERIC_NUMBERS, true);
 		try {
 			String json_string = unzipDictionary(env.getProperty("limtox.dictionary.liver_marker"));
 			JsonNode rootNode = mapper.readTree(json_string);
 			JsonNode data = rootNode.path("liver_marker");
-			List<Marker> myObjects = mapper.readValue(data, new TypeReference<List<Marker>>(){});
+			List<Marker> myObjects = Arrays.asList(mapper.readValue(data.toString(), Marker[].class));
 			return myObjects;
 		} catch (JsonParseException e) {
 			// TODO Auto-generated catch block
@@ -36,6 +37,7 @@ public class MarkerDaoJSONImpl extends GenericDaoJSONImpl<Marker> implements Mar
 			e.printStackTrace();
 		}
 		return null;
+		
     }
 
 }

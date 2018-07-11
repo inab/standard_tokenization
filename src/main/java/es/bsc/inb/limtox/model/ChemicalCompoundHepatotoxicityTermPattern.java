@@ -1,7 +1,14 @@
 package es.bsc.inb.limtox.model;
 
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ChemicalCompoundHepatotoxicityTermPattern implements LimtoxEntity{
 
+	private Integer keyId;
+	
+	private Integer id;
+	
 	private String adverse_pattern;
 	
 	private String adverse_pattern_id;
@@ -11,6 +18,21 @@ public class ChemicalCompoundHepatotoxicityTermPattern implements LimtoxEntity{
 	private String adverse_pattern_norm;
 
 	
+	public Integer getKeyId() {
+		return keyId;
+	}
+
+	public void setKeyId(Integer keyId) {
+		this.keyId = keyId;
+	}
+
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
 
 	public String getAdverse_pattern() {
 		return adverse_pattern;
@@ -59,11 +81,32 @@ public class ChemicalCompoundHepatotoxicityTermPattern implements LimtoxEntity{
 	}
 
 
+	public void toLowerCase() {
+		if(adverse_pattern!=null && !adverse_pattern.equals(adverse_pattern.toLowerCase())) {
+			adverse_pattern=adverse_pattern.toLowerCase();
+		}
+		
+	}
+	
 
 	@Override
-	public Integer getId() {
-		// TODO Auto-generated method stub
-		return null;
+    public boolean equals(Object obj) {
+	    if (obj == null) {
+	        return false;
+	    }else if(adverse_pattern==null || ((ChemicalCompoundHepatotoxicityTermPattern)obj).adverse_pattern==null) {
+	    	return false;
+	    }else {
+	    	if(adverse_pattern.equals(((ChemicalCompoundHepatotoxicityTermPattern)obj).adverse_pattern)) {
+	    		return true;
+	    	}
+	    	return false;
+	    }
+	    
+	}
+	
+	@Override
+	public int hashCode() {
+	    return adverse_pattern.hashCode();
 	}
 	
 	

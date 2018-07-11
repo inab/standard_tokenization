@@ -11,14 +11,11 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 
 
 
-@Entity
-@Table(name="marker_sentence")
+
 public class MarkerSentence {
-	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private Integer id;
 	
-	@ManyToOne
+	
+
 	private Marker marker;
 	
 	private Float score;
@@ -26,7 +23,6 @@ public class MarkerSentence {
 	private Integer quantity;
 	
 	@JsonIgnore
-	@ManyToOne
 	private Sentence sentence;
 		
 
@@ -39,15 +35,6 @@ public class MarkerSentence {
 		this.sentence = sentence;
 	}
 
-	public Integer getId() {
-		return id;
-	}
-
-	public void setId(Integer id) {
-		this.id = id;
-	}
-
-	
 	
 	public Marker getMarker() {
 		return marker;

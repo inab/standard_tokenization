@@ -7,7 +7,7 @@ public class FileFilterTxt  implements FilenameFilter{
 
 	@Override
 	public boolean accept(File dir, String name) {
-		return name.endsWith(".txt");
+		return name.endsWith(".xml");
 	}
 	
 }

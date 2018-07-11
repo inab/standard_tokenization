@@ -6,7 +6,9 @@ import java.util.Properties;
 
 import edu.stanford.nlp.coref.CorefCoreAnnotations.CorefChainAnnotation;
 import edu.stanford.nlp.coref.data.CorefChain;
+import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreAnnotations.LemmaAnnotation;
+import edu.stanford.nlp.ling.CoreAnnotations.MentionsAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.NamedEntityTagAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.PartOfSpeechAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.SentencesAnnotation;
@@ -30,7 +32,7 @@ public class BasicPipelineExampleCoreNLP {
 		      "He sent a postcard to his sister Jane Smith. " +
 		      "After hearing about Joe's trip, Jane decided she might go to France one day.";
 	
-	public static String text_2 = "Amoxicillin/clavulanic acid-induced cholestatic liver injury after pediatric liver transplantation. The interaction between line 1 carcinomas growing s.c. and their spontaneous (or artificial) metastases has been studied in "
+	public static String text_2 = "Julia Corvi -liver-transplantation, chronic cholestatic liver injury after liver pediatric liver transplantation. The interaction between line 1 carcinomas growing s.c. and their spontaneous (or artificial) metastases has been studied in "
 			+ "syngeneic BALB/c mice. In contrast to typical murine tumor systems, concomitant immunity, or the ability of primary tumors to suppress the growth "
 			+ "of metastases, develops very slowly in this system, such that the metastases that are shed within the first week of tumor growth survive and ultimately prove "
 			+ "lethal to the host. The rate of development of concomitant immunity can be accelerated by increasing the hosts' tumor burden or decelerated by exposure of "
@@ -42,7 +44,9 @@ public class BasicPipelineExampleCoreNLP {
 	    // set up pipeline properties
 	    Properties props = new Properties();
 	    // set the list of annotators to run
-	    props.setProperty("annotators", "tokenize, ssplit, pos, lemma, ner, parse, dcoref");
+	    props.setProperty("annotators", "tokenize, ssplit, pos, lemma, ner, regexner, entitymentions, parse");
+	    props.put("regexner.mapping", "/home/jcorvi/eclipse-workspace/etox/lexicon/limtox2.0-regexner.txt");
+	    props.put("regexner.posmatchtype", "MATCH_ALL_TOKENS");
 	    // set a property for an annotator, in this case the coref annotator is being set to use the neural algorithm
 	    // build pipeline
 	    StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
@@ -76,16 +80,21 @@ public class BasicPipelineExampleCoreNLP {
 			String pos = token.get(PartOfSpeechAnnotation.class);
 			String ner = token.get(NamedEntityTagAnnotation.class);
 			String lemma = token.get(LemmaAnnotation.class);
-			System.out.println(word + "\t" + pos + "\t" + ner + "\t" + lemma + "\t\n");
+			System.out.println(word + "\t" + token.beginPosition() + "\t" + token.endPosition() + "\t" + pos + "\t" + ner + "\t" + lemma + "\t\n");
 		}
 		String lemma = sentence.get(LemmaAnnotation.class);
 		// this is the parse tree of the current sentence
-		 Tree tree = sentence.get(TreeAnnotation.class);
-		 System.out.println(tree);
-		 
+		Tree tree = sentence.get(TreeAnnotation.class);
+		System.out.println(tree);
 		// this is the Stanford dependency graph of the current sentence
 		SemanticGraph dependencies = sentence.get(CollapsedCCProcessedDependenciesAnnotation.class);
 		System.out.println(dependencies); 
+		List<CoreMap> entityMentions = sentence.get(MentionsAnnotation.class);
+		for (CoreMap coreMap : entityMentions) {
+			String keyword = coreMap.get(TextAnnotation.class);
+			String entityType = coreMap.get(CoreAnnotations.EntityTypeAnnotation.class);
+			System.out.println(keyword + "\t" + entityType);
+		}
 	}
 	
 	

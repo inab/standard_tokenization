@@ -1,7 +1,19 @@
 package es.bsc.inb.limtox.model;
 
-public class CytochromeChemicalCompoundInhibitionPattern implements LimtoxEntity{
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+/**
+ * Cytochrome Chemical Compound Inhibition Pattern 
+ * @author jcorvi
+ *
+ */
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class CytochromeChemicalCompoundInhibitionPattern implements LimtoxEntity{
+	
+	private Integer id;
+	
+	private Integer keyId;
+	
 	private String cyp_inhibition_pattern_norm;
 	
 	private String cyp_inhibition_pattern_id;
@@ -60,12 +72,54 @@ public class CytochromeChemicalCompoundInhibitionPattern implements LimtoxEntity
 
 
 
-	@Override
 	public Integer getId() {
-		// TODO Auto-generated method stub
-		return null;
+		return id;
+	}
+
+
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+
+
+	public Integer getKeyId() {
+		return keyId;
+	}
+
+
+
+	public void setKeyId(Integer keyId) {
+		this.keyId = keyId;
+	}
+
+	@Override
+    public boolean equals(Object obj) {
+	    if (obj == null) {
+	        return false;
+	    }else if(cyp_inhibition_pattern==null || ((CytochromeChemicalCompoundInhibitionPattern)obj).cyp_inhibition_pattern==null) {
+	    	return false;
+	    }else {
+	    	if(cyp_inhibition_pattern.equals(((CytochromeChemicalCompoundInhibitionPattern)obj).cyp_inhibition_pattern)) {
+	    		return true;
+	    	}
+	    	return false;
+	    }
+	    
 	}
 	
+	@Override
+	public int hashCode() {
+	    return cyp_inhibition_pattern.hashCode();
+	}
+	
+	public void toLowerCase() {
+		if(cyp_inhibition_pattern!=null && !cyp_inhibition_pattern.equals(cyp_inhibition_pattern.toLowerCase())) {
+			cyp_inhibition_pattern=cyp_inhibition_pattern.toLowerCase();
+		}
+		
+	}
 	
 	
 	

@@ -11,21 +11,16 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 
 
 
-@Entity
-@Table(name="hepatotoxicityterm_sentence")
+
 public class HepatotoxicityTermSentence {
-	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Integer id;
 	
-	@ManyToOne
 	private HepatotoxicityTerm hepatotoxicityTerm;
 	
 	private Float score;
 	
 	private Integer quantity;
 	
-	@ManyToOne
 	@JsonIgnore
 	private Sentence sentence;
 		

@@ -20,8 +20,8 @@ public class CytochromeDaoJSONImpl extends GenericDaoJSONImpl<Cytochrome> implem
 		try {
 			String json_string = unzipDictionary(env.getProperty("limtox.dictionary.p450_cytochrome"));
 			JsonNode rootNode = mapper.readTree(json_string);
-			JsonNode data = rootNode.path("p450_cytochrome");
-			List<Cytochrome> myObjects = mapper.readValue(data, new TypeReference<List<Cytochrome>>(){});
+			//JsonNode data = rootNode.path("p450_cytochrome");
+			List<Cytochrome> myObjects = mapper.readValue(rootNode, new TypeReference<List<Cytochrome>>(){});
 			return myObjects;
 		} catch (JsonParseException e) {
 			// TODO Auto-generated catch block

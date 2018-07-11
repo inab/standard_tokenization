@@ -1,59 +1,113 @@
 package es.bsc.inb.limtox.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
-@Entity
-@Table(name="cytochrome")
+
 @JsonIgnoreProperties(ignoreUnknown=true)
 public class Cytochrome implements LimtoxEntity{
-	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	
 	private Integer id;
-	@Column(name="\"entityId\"")
+	
+	private Integer keyId;
+	
 	private String entityId;
-	@Column(name="name")
+	
 	private String name;
-	@Column(name="type")
+	
 	private String type;
-	@Column(name="canonical")
-	private String canonical;
+	
+	private String cytochrome_canonical_root;
+	
+	private String cytocrome_subfamily_id;
+	
+	private String cytocrome_protein_id;
+	
+	private String cytochrome_canonical_symbol;
+	
+	private String cytocrome_family_id;
+
 	public Integer getId() {
 		return id;
 	}
+
 	public void setId(Integer id) {
 		this.id = id;
 	}
+
+	public Integer getKeyId() {
+		return keyId;
+	}
+
+	public void setKeyId(Integer keyId) {
+		this.keyId = keyId;
+	}
+
 	public String getEntityId() {
 		return entityId;
 	}
+
 	public void setEntityId(String entityId) {
 		this.entityId = entityId;
 	}
+
 	public String getName() {
 		return name;
 	}
+
 	public void setName(String name) {
 		this.name = name;
 	}
+
 	public String getType() {
 		return type;
 	}
+
 	public void setType(String type) {
 		this.type = type;
 	}
-	public String getCanonical() {
-		return canonical;
+
+	public String getCytochrome_canonical_root() {
+		return cytochrome_canonical_root;
 	}
-	public void setCanonical(String canonical) {
-		this.canonical = canonical;
+
+	public void setCytochrome_canonical_root(String cytochrome_canonical_root) {
+		this.cytochrome_canonical_root = cytochrome_canonical_root;
 	}
+
+	public String getCytocrome_subfamily_id() {
+		return cytocrome_subfamily_id;
+	}
+
+	public void setCytocrome_subfamily_id(String cytocrome_subfamily_id) {
+		this.cytocrome_subfamily_id = cytocrome_subfamily_id;
+	}
+
+	public String getCytocrome_protein_id() {
+		return cytocrome_protein_id;
+	}
+
+	public void setCytocrome_protein_id(String cytocrome_protein_id) {
+		this.cytocrome_protein_id = cytocrome_protein_id;
+	}
+
+	public String getCytochrome_canonical_symbol() {
+		return cytochrome_canonical_symbol;
+	}
+
+	public void setCytochrome_canonical_symbol(String cytochrome_canonical_symbol) {
+		this.cytochrome_canonical_symbol = cytochrome_canonical_symbol;
+	}
+
+	public String getCytocrome_family_id() {
+		return cytocrome_family_id;
+	}
+
+	public void setCytocrome_family_id(String cytocrome_family_id) {
+		this.cytocrome_family_id = cytocrome_family_id;
+	}
+
+	
+	
 	
 	
 	

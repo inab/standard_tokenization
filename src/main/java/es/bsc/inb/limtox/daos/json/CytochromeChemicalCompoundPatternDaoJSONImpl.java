@@ -1,32 +1,36 @@
 package es.bsc.inb.limtox.daos.json;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.type.TypeReference;
 import org.springframework.stereotype.Repository;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonParser.Feature;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import es.bsc.inb.limtox.daos.CytochromeChemicalCompoundPatternDao;
-import es.bsc.inb.limtox.model.CytochromeChemicalCompoundPattern;
+import es.bsc.inb.limtox.model.CytochromeChemicalCompoundMetabolismPattern;
 
 
 @Repository(value="cytochromeChemicalCompoundPatternDaoJSONImpl")
-public class CytochromeChemicalCompoundPatternDaoJSONImpl extends GenericDaoJSONImpl<CytochromeChemicalCompoundPattern> implements CytochromeChemicalCompoundPatternDao {
+public class CytochromeChemicalCompoundPatternDaoJSONImpl extends GenericDaoJSONImpl<CytochromeChemicalCompoundMetabolismPattern> implements CytochromeChemicalCompoundPatternDao {
 
-	/**
-	 * 
-	 */
-	public List<CytochromeChemicalCompoundPattern> findAll() {
+
+
+	
+	@Override
+    public List<CytochromeChemicalCompoundMetabolismPattern> findAll() {
 		ObjectMapper mapper = new ObjectMapper();
+    	mapper.configure(Feature.ALLOW_NON_NUMERIC_NUMBERS, true);
 		try {
 			String json_string = unzipDictionary(env.getProperty("limtox.dictionary.limtox_cyps_pattern"));
 			JsonNode rootNode = mapper.readTree(json_string);
 			JsonNode data = rootNode.path("limtox_cyps_pattern");
-			List<CytochromeChemicalCompoundPattern> myObjects = mapper.readValue(data, new TypeReference<List<CytochromeChemicalCompoundPattern>>(){});
+			List<CytochromeChemicalCompoundMetabolismPattern> myObjects = Arrays.asList(mapper.readValue(data.toString(), CytochromeChemicalCompoundMetabolismPattern[].class));
 			return myObjects;
 		} catch (JsonParseException e) {
 			// TODO Auto-generated catch block
@@ -39,8 +43,8 @@ public class CytochromeChemicalCompoundPatternDaoJSONImpl extends GenericDaoJSON
 			e.printStackTrace();
 		}
 		return null;
-	}
-
+		
+    }
 
 
 }

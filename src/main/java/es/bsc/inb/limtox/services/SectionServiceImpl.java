@@ -4,8 +4,6 @@ import java.util.HashMap;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import es.bsc.inb.limtox.daos.SectionDao;
@@ -15,8 +13,6 @@ import es.bsc.inb.limtox.model.Section;
 @Service
 public class SectionServiceImpl implements SectionService{
 	
-	@Autowired
-	@Qualifier("sectionDaoJPAImpl")
 	private SectionDao sectionsDao;
 	
 	private HashMap<String,Section> sections = null;
@@ -35,14 +31,13 @@ public class SectionServiceImpl implements SectionService{
 		}
 	}
 
-	public HashMap<String, Section> getSections() {
-		return sections;
+	public Section getSection(String key) {
+		if(key.contains("_LIMTOX>.")) {
+			String name = key.substring(1, key.indexOf("_LIMTOX>."));
+			name = name.substring(0, 1).toUpperCase() + name.substring(1).toLowerCase();
+			return new Section(name, key);
+		}else {
+			return null;
+		}
 	}
-
-	public void setSections(HashMap<String, Section> sections) {
-		this.sections = sections;
-	}
-	
-	
-
 }

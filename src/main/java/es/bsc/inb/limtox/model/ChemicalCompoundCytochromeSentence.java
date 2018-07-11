@@ -1,27 +1,13 @@
 package es.bsc.inb.limtox.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-
-import org.codehaus.jackson.annotate.JsonIgnore;
-
-
-
-@Entity
-@Table(name="chemicalcompound_cytochrome_sentence")
 public class ChemicalCompoundCytochromeSentence {
-	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	
 	private Integer id;
 	
-	@ManyToOne
+
 	private ChemicalCompound chemicalCompound;
 	
-	@ManyToOne
+	
 	private Cytochrome cytochrome;
 	
 	private RelationRule relationRule;
@@ -30,8 +16,7 @@ public class ChemicalCompoundCytochromeSentence {
 	
 	private Integer quantity;
 	
-	@ManyToOne
-	@JsonIgnore
+	
 	private Sentence sentence;
 		
 	public ChemicalCompoundCytochromeSentence() {}

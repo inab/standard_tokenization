@@ -3,62 +3,31 @@ package es.bsc.inb.limtox.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-
 import org.codehaus.jackson.annotate.JsonIgnore;
 
 
-@Entity
-@Table(name="sentence")
+
 public class Sentence implements LimtoxEntity {
-	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Integer id;
 	@JsonIgnore
-	@ManyToOne
 	private Document document;
 	
 	private String text;
-	@ManyToOne
+	
 	private Section section;
 	
-	
-	@OneToMany(cascade = CascadeType.ALL, 
-	mappedBy = "sentence", orphanRemoval = true)
 	private List<ChemicalCompoundSentence> chemicalCompoundSentences = new ArrayList<ChemicalCompoundSentence>();
 	
-	
-	@OneToMany(cascade = CascadeType.ALL, 
-	mappedBy = "sentence", orphanRemoval = true)
 	private List<HepatotoxicityTermSentence> hepatotoxicityTermSentences = new ArrayList<HepatotoxicityTermSentence>();
 	
-	
-	@OneToMany(cascade = CascadeType.ALL, 
-	mappedBy = "sentence", orphanRemoval = true)
 	private List<CytochromeSentence> cytochromeSentences = new ArrayList<CytochromeSentence>();
 	
-	
-	@OneToMany(cascade = CascadeType.ALL, 
-	mappedBy = "sentence", orphanRemoval = true)
 	private List<MarkerSentence> markerSentences = new ArrayList<MarkerSentence>();
 	
-	@OneToMany(cascade = CascadeType.ALL, 
-	mappedBy = "sentence", orphanRemoval = true)
 	private List<ChemicalCompoundCytochromeSentence> chemicalCompoundCytochromeSentences = new ArrayList<ChemicalCompoundCytochromeSentence>();
 
-	@OneToMany(cascade = CascadeType.ALL, 
-	mappedBy = "sentence", orphanRemoval = true)
 	private List<HepatotoxicityTermChemicalCompoundSentence> hepatotoxicityTermChemicalCompoundSentences = new ArrayList<HepatotoxicityTermChemicalCompoundSentence>();
 	
-	@OneToMany(cascade = CascadeType.ALL, 
-	mappedBy = "sentence", orphanRemoval = true)
 	private List<MarkerChemicalCompoundSentence> markerChemicalCompoundSentences = new ArrayList<MarkerChemicalCompoundSentence>();
 	
 	public Sentence() {}

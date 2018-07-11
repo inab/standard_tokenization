@@ -7,9 +7,10 @@ import es.bsc.inb.limtox.model.ChemicalCompoundHepatotoxicityTermPattern;
 import es.bsc.inb.limtox.model.Cytochrome;
 import es.bsc.inb.limtox.model.CytochromeChemicalCompoundInductionPattern;
 import es.bsc.inb.limtox.model.CytochromeChemicalCompoundInhibitionPattern;
-import es.bsc.inb.limtox.model.CytochromeChemicalCompoundPattern;
+import es.bsc.inb.limtox.model.CytochromeChemicalCompoundMetabolismPattern;
 import es.bsc.inb.limtox.model.HepatotoxicityTerm;
 import es.bsc.inb.limtox.model.Marker;
+import es.bsc.inb.limtox.model.MeshChemicalCompound;
 
 public interface DictionaryService {
 
@@ -17,18 +18,23 @@ public interface DictionaryService {
 	
 	public List<ChemicalCompound> getChemicalCompounds();
 	
+	public List<MeshChemicalCompound> getMeshChemicalCompounds();
+	
 	public List<HepatotoxicityTerm> getHepatotoxicityTerms();
 	
 	public List<Cytochrome> getCytochromes();
 	
 	public List<Marker> getMarkers();
 	
-	public List<CytochromeChemicalCompoundPattern> getCytochromeChemicalCompoundPatterns();
+	public List<CytochromeChemicalCompoundMetabolismPattern> getCytochromeChemicalCompoundPatterns();
 	
 	public List<CytochromeChemicalCompoundInductionPattern> getCytochromeChemicalCompoundInductionPatterns();
 	
 	public List<CytochromeChemicalCompoundInhibitionPattern> getCytochromeChemicalCompoundInhibitionPatterns();
 	
 	public List<ChemicalCompoundHepatotoxicityTermPattern> getChemicalCompoundHepatotoxicityTermPatterns();
+	
+	
+	
 	
 }

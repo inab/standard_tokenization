@@ -1,7 +1,19 @@
 package es.bsc.inb.limtox.model;
 
-public class CytochromeChemicalCompoundInductionPattern implements LimtoxEntity{
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+/**
+ * Cytochrome Chemical Compound Induction Pattern 
+ * @author jcorvi
+ *
+ */
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class CytochromeChemicalCompoundInductionPattern implements LimtoxEntity{
+	
+	private Integer id;
+	
+	private Integer keyId;
+	
 	private String cyp_induction_pattern_norm;
 	
 	private String cyp_induction_pattern_id;
@@ -44,15 +56,48 @@ public class CytochromeChemicalCompoundInductionPattern implements LimtoxEntity{
 		this.cyp_induction_pattern = cyp_induction_pattern;
 	}
 
-
-
-	@Override
 	public Integer getId() {
-		// TODO Auto-generated method stub
-		return null;
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	public Integer getKeyId() {
+		return keyId;
+	}
+
+	public void setKeyId(Integer keyId) {
+		this.keyId = keyId;
 	}
 	
+	@Override
+    public boolean equals(Object obj) {
+	    if (obj == null) {
+	        return false;
+	    }else if(cyp_induction_pattern==null || ((CytochromeChemicalCompoundInductionPattern)obj).cyp_induction_pattern==null) {
+	    	return false;
+	    }else {
+	    	if(cyp_induction_pattern.equals(((CytochromeChemicalCompoundInductionPattern)obj).cyp_induction_pattern)) {
+	    		return true;
+	    	}
+	    	return false;
+	    }
+	    
+	}
 	
+	@Override
+	public int hashCode() {
+	    return cyp_induction_pattern.hashCode();
+	}
+	
+	public void toLowerCase() {
+		if(cyp_induction_pattern!=null && !cyp_induction_pattern.equals(cyp_induction_pattern.toLowerCase())) {
+			cyp_induction_pattern=cyp_induction_pattern.toLowerCase();
+		}
+		
+	}
 	
 	
 }

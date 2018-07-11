@@ -36,13 +36,13 @@ public class MainServiceImpl {
 //		}
 //	}
 	
-
-	
-	
 	public void execute() {
+		long start=0;
+		long stop=0;
+		start = System.nanoTime();
 		dictionaryService.execute();
-		sectionService.execute();
-		File root = new File("/home/jcorvi/text_mining_data_test/pubmed_data/standardization/baseline/1");
+		//sectionService.execute();
+		File root = new File("/home/jcorvi/text_mining_data_test/pubmed_data/standardization/baseline/4");
 		for (File  file : root.listFiles(new FileFilterTxt())) { 
 			try {
 				String pmid = file.getName().substring(4, file.getName().indexOf('.'));
@@ -51,5 +51,9 @@ public class MainServiceImpl {
 				e.printStackTrace();
 			}
 		}
+		stop = System.nanoTime();
+		System.out.println("Contains: " + (stop-start));
 	}
+
+
 }

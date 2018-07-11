@@ -1,23 +1,19 @@
 package es.bsc.inb.limtox.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
-@Entity
-@Table(name="section")
 public class Section implements LimtoxEntity {
-	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Integer id;
 	
 	private String name;
-	@Column(name="internalname")
 	private String internalName;
 	
+	
+	
+	public Section(String name, String internalName) {
+		super();
+		this.name = name;
+		this.internalName = internalName;
+	}
+
 	public Integer getId() {
 		return id;
 	}

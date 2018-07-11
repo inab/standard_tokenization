@@ -1,17 +1,14 @@
 package es.bsc.inb.limtox.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-@Entity
 @JsonIgnoreProperties(ignoreUnknown=true)
 public class Marker implements LimtoxEntity{
-	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
+
 	private Integer id;
+	
+	private Integer keyId;
+	
 	private String marker_full_name;
 	
 	private String marker_namespace;
@@ -77,4 +74,46 @@ public class Marker implements LimtoxEntity{
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	public void toLowerCase() {
+		if(marker_full_name!=null && !marker_full_name.equals(marker_full_name.toLowerCase())) {
+			marker_full_name=marker_full_name.toLowerCase();
+		}
+		
+	}
+	
+
+	@Override
+    public boolean equals(Object obj) {
+	    if (obj == null) {
+	        return false;
+	    }else if(marker_full_name==null || ((Marker)obj).marker_full_name==null) {
+	    	return false;
+	    }else {
+	    	if(marker_full_name.equals(((Marker)obj).marker_full_name)) {
+	    		return true;
+	    	}
+	    	return false;
+	    }
+	    
+	}
+	
+	@Override
+	public int hashCode() {
+	    return marker_full_name.hashCode();
+	}
+	
+	public Integer getKeyId() {
+		return keyId;
+	}
+
+	public void setKeyId(Integer keyId) {
+		this.keyId = keyId;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+	
+	
 }

@@ -3,30 +3,17 @@ package es.bsc.inb.limtox.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.CascadeType;
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.OneToMany;
-@Entity
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "type")
+
+
 public abstract class Document implements LimtoxEntity {
-	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
+
 	private Integer id;
 	
 	private String sourceId;
 	
-	
-	@OneToMany(cascade = CascadeType.ALL, 
-	mappedBy = "document", orphanRemoval = true)
 	private List<Sentence> sentences = new ArrayList<Sentence>();
 	
+	private List<MeshChemicalCompound> meshChemicalCompounds = new ArrayList<MeshChemicalCompound>();
 	
 	public Document() {
 		super();
@@ -58,5 +45,15 @@ public abstract class Document implements LimtoxEntity {
 	public void setSourceId(String sourceId) {
 		this.sourceId = sourceId;
 	}
+	public List<MeshChemicalCompound> getMeshChemicalCompounds() {
+		return meshChemicalCompounds;
+	}
+	public void setMeshChemicalCompounds(List<MeshChemicalCompound> meshChemicalCompounds) {
+		this.meshChemicalCompounds = meshChemicalCompounds;
+	}
+	
+	
+	
+	
 	
 }
