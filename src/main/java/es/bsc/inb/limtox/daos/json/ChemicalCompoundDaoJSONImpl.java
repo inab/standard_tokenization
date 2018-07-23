@@ -23,8 +23,8 @@ public class ChemicalCompoundDaoJSONImpl extends GenericDaoJSONImpl<ChemicalComp
     	mapper.configure(Feature.ALLOW_NON_NUMERIC_NUMBERS, true);
 		try {
 			String json_string = unzipDictionary(env.getProperty("limtox.dictionary.chemical_entity"));
-			JsonNode rootNode = mapper.readTree(json_string);
-			JsonNode data = rootNode.path("chemical_entity");
+			JsonNode data = mapper.readTree(json_string);
+			//JsonNode data = rootNode.path("chemical_entity");
 			List<ChemicalCompound> myObjects = Arrays.asList(mapper.readValue(data.toString(), ChemicalCompound[].class));
 			return myObjects;
 		} catch (JsonParseException e) {

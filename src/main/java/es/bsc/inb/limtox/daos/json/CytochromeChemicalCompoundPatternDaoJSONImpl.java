@@ -28,8 +28,8 @@ public class CytochromeChemicalCompoundPatternDaoJSONImpl extends GenericDaoJSON
     	mapper.configure(Feature.ALLOW_NON_NUMERIC_NUMBERS, true);
 		try {
 			String json_string = unzipDictionary(env.getProperty("limtox.dictionary.limtox_cyps_pattern"));
-			JsonNode rootNode = mapper.readTree(json_string);
-			JsonNode data = rootNode.path("limtox_cyps_pattern");
+			JsonNode data = mapper.readTree(json_string);
+			//JsonNode data = rootNode.path("limtox_cyps_pattern");
 			List<CytochromeChemicalCompoundMetabolismPattern> myObjects = Arrays.asList(mapper.readValue(data.toString(), CytochromeChemicalCompoundMetabolismPattern[].class));
 			return myObjects;
 		} catch (JsonParseException e) {

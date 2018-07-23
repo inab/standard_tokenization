@@ -26,8 +26,8 @@ public class CytochromeChemicalCompoundInhibitionPatternDaoJSONImpl extends Gene
     	mapper.configure(Feature.ALLOW_NON_NUMERIC_NUMBERS, true);
 		try {
 			String json_string = unzipDictionary(env.getProperty("limtox.dictionary.limtox_p450_cyps_inhibition_pattern"));
-			JsonNode rootNode = mapper.readTree(json_string);
-			JsonNode data = rootNode.path("limtox_p450_cyps_inhibition_pattern");
+			JsonNode data = mapper.readTree(json_string);
+			//JsonNode data = rootNode.path("limtox_p450_cyps_inhibition_pattern");
 			List<CytochromeChemicalCompoundInhibitionPattern> myObjects = Arrays.asList(mapper.readValue(data.toString(), CytochromeChemicalCompoundInhibitionPattern[].class));
 			return myObjects;
 		} catch (JsonParseException e) {

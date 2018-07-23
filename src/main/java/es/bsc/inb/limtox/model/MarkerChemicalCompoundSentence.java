@@ -1,9 +1,6 @@
 package es.bsc.inb.limtox.model;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
-
-
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class MarkerChemicalCompoundSentence {
 	private Integer id;
@@ -23,12 +20,13 @@ public class MarkerChemicalCompoundSentence {
 		
 	public MarkerChemicalCompoundSentence() {}
 	
-	public MarkerChemicalCompoundSentence(ChemicalCompound chemicalCompound, Marker marker,Float score, Integer quantity, Sentence sentence) {
+	public MarkerChemicalCompoundSentence(ChemicalCompound chemicalCompound, Marker marker,Float score, Integer quantity, Sentence sentence, RelationRule relationRule) {
 		this.chemicalCompound = chemicalCompound;
 		this.marker = marker;
 		this.score = score;
 		this.quantity = quantity;
 		this.sentence = sentence;
+		this.relationRule = relationRule;
 	}
 
 	public Integer getId() {

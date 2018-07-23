@@ -25,8 +25,8 @@ public class CytochromeChemicalCompoundInductionPatternDaoJSONImpl extends Gener
     	mapper.configure(Feature.ALLOW_NON_NUMERIC_NUMBERS, true);
 		try {
 			String json_string = unzipDictionary(env.getProperty("limtox.dictionary.limtox_p450_cyps_induction_pattern"));
-			JsonNode rootNode = mapper.readTree(json_string);
-			JsonNode data = rootNode.path("limtox_p450_cyps_induction_pattern");
+			JsonNode data = mapper.readTree(json_string);
+			//JsonNode data = rootNode.path("limtox_p450_cyps_induction_pattern");
 			List<CytochromeChemicalCompoundInductionPattern> myObjects = Arrays.asList(mapper.readValue(data.toString(), CytochromeChemicalCompoundInductionPattern[].class));
 			return myObjects;
 		} catch (JsonParseException e) {

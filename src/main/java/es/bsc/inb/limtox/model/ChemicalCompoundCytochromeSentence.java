@@ -1,12 +1,12 @@
 package es.bsc.inb.limtox.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class ChemicalCompoundCytochromeSentence {
 	
 	private Integer id;
 	
-
 	private ChemicalCompound chemicalCompound;
-	
 	
 	private Cytochrome cytochrome;
 	
@@ -15,8 +15,7 @@ public class ChemicalCompoundCytochromeSentence {
 	private Float score;
 	
 	private Integer quantity;
-	
-	
+	@JsonIgnore
 	private Sentence sentence;
 		
 	public ChemicalCompoundCytochromeSentence() {}

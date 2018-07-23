@@ -23,8 +23,8 @@ public class HepatotoxicityTermDaoJSONImpl extends GenericDaoJSONImpl<Hepatotoxi
     	mapper.configure(Feature.ALLOW_NON_NUMERIC_NUMBERS, true);
 		try {
 			String json_string = unzipDictionary(env.getProperty("limtox.dictionary.hepatotoxicity"));
-			JsonNode rootNode = mapper.readTree(json_string);
-			JsonNode data = rootNode.path("hepatotoxicity");
+			JsonNode data = mapper.readTree(json_string);
+			//JsonNode data = rootNode.path("hepatotoxicity");
 			List<HepatotoxicityTerm> myObjects = Arrays.asList(mapper.readValue(data.toString(), HepatotoxicityTerm[].class));
 			return myObjects;
 		} catch (JsonParseException e) {

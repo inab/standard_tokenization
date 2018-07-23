@@ -3,10 +3,12 @@ package es.bsc.inb.limtox.daos.json;
 import java.io.File;
 import java.io.IOException;
 
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.stereotype.Repository;
+
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import es.bsc.inb.limtox.daos.DocumentDao;
 import es.bsc.inb.limtox.exceptions.MoreThanOneEntityException;
@@ -17,6 +19,8 @@ public class DocumentDaoJSONImpl extends GenericDaoJSONImpl<Document> implements
 	@Override
     public Document save(Document document) {
 		ObjectMapper objectMapper = new ObjectMapper();
+		objectMapper.setSerializationInclusion(Include.NON_NULL);
+		objectMapper.setSerializationInclusion(Include.NON_EMPTY);
 		try {
 			String path = env.getProperty("limtox.input.folder");
 			objectMapper.writeValue(new File(path+"pubmed_data/findings/baseline/1/"+document.getSourceId()+".json"), document);

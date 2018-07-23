@@ -10,7 +10,9 @@ import es.bsc.inb.limtox.model.CytochromeChemicalCompoundInhibitionPattern;
 import es.bsc.inb.limtox.model.CytochromeChemicalCompoundMetabolismPattern;
 import es.bsc.inb.limtox.model.HepatotoxicityTerm;
 import es.bsc.inb.limtox.model.Marker;
+import es.bsc.inb.limtox.model.MarkerChemicalCompoundPattern;
 import es.bsc.inb.limtox.model.MeshChemicalCompound;
+import es.bsc.inb.limtox.model.Taxonomy;
 
 public interface DictionaryService {
 
@@ -34,7 +36,8 @@ public interface DictionaryService {
 	
 	public List<ChemicalCompoundHepatotoxicityTermPattern> getChemicalCompoundHepatotoxicityTermPatterns();
 	
+	public List<Taxonomy> getTaxonomies();
 	
-	
+	public List<MarkerChemicalCompoundPattern> getMarkerChemicalCompoundPatterns();
 	
 }

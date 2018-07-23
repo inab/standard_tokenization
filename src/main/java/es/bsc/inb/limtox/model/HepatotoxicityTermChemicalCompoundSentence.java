@@ -1,9 +1,6 @@
 package es.bsc.inb.limtox.model;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
-
-
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class HepatotoxicityTermChemicalCompoundSentence {
 	

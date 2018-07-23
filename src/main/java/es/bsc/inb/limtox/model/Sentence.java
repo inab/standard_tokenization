@@ -3,9 +3,7 @@ package es.bsc.inb.limtox.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
-
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class Sentence implements LimtoxEntity {
 	private Integer id;
@@ -13,6 +11,8 @@ public class Sentence implements LimtoxEntity {
 	private Document document;
 	
 	private String text;
+	
+	private Integer order;
 	
 	private Section section;
 	
@@ -30,13 +30,16 @@ public class Sentence implements LimtoxEntity {
 	
 	private List<MarkerChemicalCompoundSentence> markerChemicalCompoundSentences = new ArrayList<MarkerChemicalCompoundSentence>();
 	
+	private List<TaxonomySentence> taxonomySentences = new ArrayList<TaxonomySentence>();
+	
 	public Sentence() {}
 	
-	public Sentence(Document document, String text, Section section) {
+	public Sentence(Document document, String text, Section section, int order) {
 		super();
 		this.document = document;
 		this.text = text;
 		this.section = section;
+		this.order=order;
 	}
 
 	public Integer getId() {
@@ -127,6 +130,23 @@ public class Sentence implements LimtoxEntity {
 	public void setHepatotoxicityTermChemicalCompoundSentences(
 			List<HepatotoxicityTermChemicalCompoundSentence> hepatotoxicityTermChemicalCompoundSentences) {
 		this.hepatotoxicityTermChemicalCompoundSentences = hepatotoxicityTermChemicalCompoundSentences;
+	}
+
+	
+	public List<TaxonomySentence> getTaxonomySentences() {
+		return taxonomySentences;
+	}
+
+	public void setTaxonomySentences(List<TaxonomySentence> taxonomySentences) {
+		this.taxonomySentences = taxonomySentences;
+	}
+
+	public Integer getOrder() {
+		return order;
+	}
+
+	public void setOrder(Integer order) {
+		this.order = order;
 	}
 
 	

@@ -22,8 +22,8 @@ public class MarkerDaoJSONImpl extends GenericDaoJSONImpl<Marker> implements Mar
     	mapper.configure(Feature.ALLOW_NON_NUMERIC_NUMBERS, true);
 		try {
 			String json_string = unzipDictionary(env.getProperty("limtox.dictionary.liver_marker"));
-			JsonNode rootNode = mapper.readTree(json_string);
-			JsonNode data = rootNode.path("liver_marker");
+			JsonNode data = mapper.readTree(json_string);
+			//JsonNode data = rootNode.path("liver_marker");
 			List<Marker> myObjects = Arrays.asList(mapper.readValue(data.toString(), Marker[].class));
 			return myObjects;
 		} catch (JsonParseException e) {

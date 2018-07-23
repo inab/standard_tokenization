@@ -12,24 +12,20 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import es.bsc.inb.limtox.daos.ChemicalCompoundHepatotoxicityTermPatternDao;
-import es.bsc.inb.limtox.model.ChemicalCompoundHepatotoxicityTermPattern;
-
-
-@Repository(value="chemicalCompoundHepatotoxicityTermPatternDaoJSONImpl")
-public class ChemicalCompoundHepatotoxicityTermPatternDaoJSONImpl extends GenericDaoJSONImpl<ChemicalCompoundHepatotoxicityTermPattern> implements ChemicalCompoundHepatotoxicityTermPatternDao {
-
-
-
+import es.bsc.inb.limtox.daos.TaxonomyDao;
+import es.bsc.inb.limtox.model.Taxonomy;
+@Repository(value="taxonomyDaoJSONImpl")
+public class TaxonomyDaoJSONImpl extends GenericDaoJSONImpl<Taxonomy> implements TaxonomyDao{
+	
 	@Override
-    public List<ChemicalCompoundHepatotoxicityTermPattern> findAll() {
+    public List<Taxonomy> findAll() {
 		ObjectMapper mapper = new ObjectMapper();
     	mapper.configure(Feature.ALLOW_NON_NUMERIC_NUMBERS, true);
 		try {
-			String json_string = unzipDictionary(env.getProperty("limtox.dictionary.limtox_adverse_pattern"));
+			String json_string = unzipDictionary(env.getProperty("limtox.dictionary.taxonomy"));
 			JsonNode data = mapper.readTree(json_string);
-			//JsonNode data = rootNode.path("limtox_adverse_pattern");
-			List<ChemicalCompoundHepatotoxicityTermPattern> myObjects = Arrays.asList(mapper.readValue(data.toString(), ChemicalCompoundHepatotoxicityTermPattern[].class));
+			//JsonNode data = rootNode.path("chemical_entity");
+			List<Taxonomy> myObjects = Arrays.asList(mapper.readValue(data.toString(), Taxonomy[].class));
 			return myObjects;
 		} catch (JsonParseException e) {
 			// TODO Auto-generated catch block

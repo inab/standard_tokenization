@@ -12,24 +12,24 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import es.bsc.inb.limtox.daos.ChemicalCompoundHepatotoxicityTermPatternDao;
-import es.bsc.inb.limtox.model.ChemicalCompoundHepatotoxicityTermPattern;
+import es.bsc.inb.limtox.daos.MarkerChemicalCompoundPatternDao;
+import es.bsc.inb.limtox.model.MarkerChemicalCompoundPattern;
 
 
-@Repository(value="chemicalCompoundHepatotoxicityTermPatternDaoJSONImpl")
-public class ChemicalCompoundHepatotoxicityTermPatternDaoJSONImpl extends GenericDaoJSONImpl<ChemicalCompoundHepatotoxicityTermPattern> implements ChemicalCompoundHepatotoxicityTermPatternDao {
+@Repository(value="markerChemicalCompoundPatternDaoJSONImpl")
+public class MarkerChemicalCompoundPatternDaoJSONImpl extends GenericDaoJSONImpl<MarkerChemicalCompoundPattern> implements MarkerChemicalCompoundPatternDao {
 
 
 
+	
 	@Override
-    public List<ChemicalCompoundHepatotoxicityTermPattern> findAll() {
+    public List<MarkerChemicalCompoundPattern> findAll() {
 		ObjectMapper mapper = new ObjectMapper();
     	mapper.configure(Feature.ALLOW_NON_NUMERIC_NUMBERS, true);
 		try {
-			String json_string = unzipDictionary(env.getProperty("limtox.dictionary.limtox_adverse_pattern"));
+			String json_string = unzipDictionary(env.getProperty("limtox.dictionary.limtox_marker_pattern"));
 			JsonNode data = mapper.readTree(json_string);
-			//JsonNode data = rootNode.path("limtox_adverse_pattern");
-			List<ChemicalCompoundHepatotoxicityTermPattern> myObjects = Arrays.asList(mapper.readValue(data.toString(), ChemicalCompoundHepatotoxicityTermPattern[].class));
+			List<MarkerChemicalCompoundPattern> myObjects = Arrays.asList(mapper.readValue(data.toString(), MarkerChemicalCompoundPattern[].class));
 			return myObjects;
 		} catch (JsonParseException e) {
 			// TODO Auto-generated catch block
@@ -44,5 +44,6 @@ public class ChemicalCompoundHepatotoxicityTermPatternDaoJSONImpl extends Generi
 		return null;
 		
     }
+
 
 }

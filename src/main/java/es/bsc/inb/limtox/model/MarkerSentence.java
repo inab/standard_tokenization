@@ -1,21 +1,9 @@
 package es.bsc.inb.limtox.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-
-import org.codehaus.jackson.annotate.JsonIgnore;
-
-
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class MarkerSentence {
 	
-	
-
 	private Marker marker;
 	
 	private Float score;
@@ -25,7 +13,6 @@ public class MarkerSentence {
 	@JsonIgnore
 	private Sentence sentence;
 		
-
 	public MarkerSentence() {}
 	
 	public MarkerSentence(Marker marker, Float score, Integer quantity, Sentence sentence) {

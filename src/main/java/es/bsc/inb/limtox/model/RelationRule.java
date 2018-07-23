@@ -6,5 +6,7 @@ public enum RelationRule {
    ADVERSE_EFFECT,
    INDUCTION,
    INHIBITION,
-   METABOLISM;
+   METABOLISM,
+   INCREASE,
+   DECREASE;
 }

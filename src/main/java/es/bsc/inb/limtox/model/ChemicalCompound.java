@@ -79,7 +79,12 @@ public class ChemicalCompound implements LimtoxEntity {
 
 
 	public void setNameToStruct(Integer nameToStruct) {
-		this.nameToStruct = nameToStruct;
+		if(nameToStruct!=null && nameToStruct.equals("NaN")) {
+			this.nameToStruct = null;
+		}else {
+			this.nameToStruct = nameToStruct;
+		}
+		
 	}
 
 
@@ -89,7 +94,11 @@ public class ChemicalCompound implements LimtoxEntity {
 
 
 	public void setChemPlusId(String chemPlusId) {
-		this.chemPlusId = chemPlusId;
+		if(chemPlusId!=null && chemPlusId.equals("NaN")) {
+			this.chemPlusId = null;
+		}else {
+			this.chemPlusId = chemPlusId;
+		}
 	}
 
 
@@ -99,7 +108,11 @@ public class ChemicalCompound implements LimtoxEntity {
 
 
 	public void setChebi(String chebi) {
-		this.chebi = chebi;
+		if(chebi!=null && chebi.equals("NaN")) {
+			this.chebi = null;
+		}else {
+			this.chebi = chebi;
+		}
 	}
 
 
@@ -109,7 +122,11 @@ public class ChemicalCompound implements LimtoxEntity {
 
 
 	public void setCasRegistryNumber(String casRegistryNumber) {
-		this.casRegistryNumber = casRegistryNumber;
+		if(casRegistryNumber!=null && casRegistryNumber.equals("NaN")) {
+			this.casRegistryNumber = null;
+		}else {
+			this.casRegistryNumber = casRegistryNumber;
+		}
 	}
 
 
@@ -119,7 +136,11 @@ public class ChemicalCompound implements LimtoxEntity {
 
 
 	public void setPubChemCompundId(String pubChemCompundId) {
-		this.pubChemCompundId = pubChemCompundId;
+		if(pubChemCompundId!=null && pubChemCompundId.equals("NaN")) {
+			this.pubChemCompundId = null;
+		}else {
+			this.pubChemCompundId = pubChemCompundId;
+		}
 	}
 
 
@@ -129,7 +150,11 @@ public class ChemicalCompound implements LimtoxEntity {
 
 
 	public void setPubChemSubstance(String pubChemSubstance) {
-		this.pubChemSubstance = pubChemSubstance;
+		if(pubChemSubstance!=null && pubChemSubstance.equals("NaN")) {
+			this.pubChemSubstance = null;
+		}else {
+			this.pubChemSubstance = pubChemSubstance;
+		}
 	}
 
 
@@ -139,7 +164,11 @@ public class ChemicalCompound implements LimtoxEntity {
 
 
 	public void setInchi(String inchi) {
-		this.inchi = inchi;
+		if(inchi!=null && inchi.equals("NaN")) {
+			this.inchi = null;
+		}else {
+			this.inchi = inchi;
+		}
 	}
 
 
@@ -149,7 +178,11 @@ public class ChemicalCompound implements LimtoxEntity {
 
 
 	public void setDrugBankId(String drugBankId) {
-		this.drugBankId = drugBankId;
+		if(drugBankId!=null && drugBankId.equals("NaN")) {
+			this.drugBankId = null;
+		}else {
+			this.drugBankId = drugBankId;
+		}
 	}
 
 
@@ -159,7 +192,11 @@ public class ChemicalCompound implements LimtoxEntity {
 
 
 	public void setHumanMetabolome(String humanMetabolome) {
-		this.humanMetabolome = humanMetabolome;
+		if(humanMetabolome!=null && humanMetabolome.equals("NaN")) {
+			this.humanMetabolome = null;
+		}else {
+			this.humanMetabolome = humanMetabolome;
+		}
 	}
 
 
@@ -169,7 +206,11 @@ public class ChemicalCompound implements LimtoxEntity {
 
 
 	public void setKeggCompoundId(String keggCompoundId) {
-		this.keggCompoundId = keggCompoundId;
+		if(keggCompoundId!=null && keggCompoundId.equals("NaN")) {
+			this.keggCompoundId = null;
+		}else {
+			this.keggCompoundId = keggCompoundId;
+		}
 	}
 
 
@@ -179,7 +220,11 @@ public class ChemicalCompound implements LimtoxEntity {
 
 
 	public void setMeshSubstanceId(String meshSubstanceId) {
-		this.meshSubstanceId = meshSubstanceId;
+		if(meshSubstanceId!=null && meshSubstanceId.equals("NaN")) {
+			this.meshSubstanceId = null;
+		}else {
+			this.meshSubstanceId = meshSubstanceId;
+		}
 	}
 
 
@@ -189,7 +234,11 @@ public class ChemicalCompound implements LimtoxEntity {
 
 
 	public void setNrDBIds(String nrDBIds) {
-		this.nrDBIds = nrDBIds;
+		if(nrDBIds!=null && nrDBIds.equals("NaN")) {
+			this.nrDBIds = null;
+		}else {
+			this.nrDBIds = nrDBIds;
+		}
 	}
 
 
@@ -199,7 +248,11 @@ public class ChemicalCompound implements LimtoxEntity {
 
 
 	public void setSmile(String smile) {
-		this.smile = smile;
+		if(smile!=null && smile.equals("NaN")) {
+			this.smile = null;
+		}else {
+			this.smile = smile;
+		}
 	}
 
 

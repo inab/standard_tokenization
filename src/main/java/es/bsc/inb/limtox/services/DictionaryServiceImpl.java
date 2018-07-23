@@ -14,8 +14,10 @@ import es.bsc.inb.limtox.daos.CytochromeChemicalCompoundInhibitionPatternDao;
 import es.bsc.inb.limtox.daos.CytochromeChemicalCompoundPatternDao;
 import es.bsc.inb.limtox.daos.CytochromeDao;
 import es.bsc.inb.limtox.daos.HepatotoxicityTermDao;
+import es.bsc.inb.limtox.daos.MarkerChemicalCompoundPatternDao;
 import es.bsc.inb.limtox.daos.MarkerDao;
 import es.bsc.inb.limtox.daos.MeshChemicalCompoundDao;
+import es.bsc.inb.limtox.daos.TaxonomyDao;
 import es.bsc.inb.limtox.model.ChemicalCompound;
 import es.bsc.inb.limtox.model.ChemicalCompoundHepatotoxicityTermPattern;
 import es.bsc.inb.limtox.model.Cytochrome;
@@ -24,7 +26,9 @@ import es.bsc.inb.limtox.model.CytochromeChemicalCompoundInhibitionPattern;
 import es.bsc.inb.limtox.model.CytochromeChemicalCompoundMetabolismPattern;
 import es.bsc.inb.limtox.model.HepatotoxicityTerm;
 import es.bsc.inb.limtox.model.Marker;
+import es.bsc.inb.limtox.model.MarkerChemicalCompoundPattern;
 import es.bsc.inb.limtox.model.MeshChemicalCompound;
+import es.bsc.inb.limtox.model.Taxonomy;
 
 /**
  * Service for the Dictionaries operations 
@@ -60,6 +64,15 @@ public class DictionaryServiceImpl implements DictionaryService{
 	
 	@Autowired
 	private ChemicalCompoundHepatotoxicityTermPatternDao chemicalCompoundHepatotoxicityTermPatternDao;
+	
+	@Autowired
+	private TaxonomyDao taxonomyDao;
+	
+	/**
+	 * Relation between Chemical compounds and Hepatotoxicity Term
+	 */
+	private MarkerChemicalCompoundPatternDao markerChemicalCompoundPatternDao = null;
+	
 	/**
 	 * Chemical compounds Dictionary
 	 */
@@ -97,6 +110,18 @@ public class DictionaryServiceImpl implements DictionaryService{
 	 */
 	private List<ChemicalCompoundHepatotoxicityTermPattern> chemicalCompoundHepatotoxicityTermPatterns = null;
 	
+	/**
+	 * Relation between Chemical compounds and Hepatotoxicity Term
+	 */
+	private List<MarkerChemicalCompoundPattern> markerChemicalCompoundPatterns = null;
+	
+
+	
+	/**
+	 * Taxonomies Entity. Species
+	 */
+	private List<Taxonomy> taxonomies = null;
+	
 	protected Log log = LogFactory.getLog(this.getClass());
 	
 	public void execute() {
@@ -118,6 +143,10 @@ public class DictionaryServiceImpl implements DictionaryService{
 			markers = markerDao.findAll();
 			log.debug("DictionaryServiceImpl :: execute :: end loading markers");
 			
+			log.debug("DictionaryServiceImpl :: execute :: loading taxonomies");
+			taxonomies = taxonomyDao.findAll();
+			log.debug("DictionaryServiceImpl :: execute :: end loading taxonomies");
+			
 			log.debug("DictionaryServiceImpl :: execute :: loading compound compound hepatotoxicity term");
 			chemicalCompoundHepatotoxicityTermPatterns = chemicalCompoundHepatotoxicityTermPatternDao.findAll();
 			log.debug("DictionaryServiceImpl :: execute :: end loading compound compound hepatotoxicity term");
@@ -132,6 +161,12 @@ public class DictionaryServiceImpl implements DictionaryService{
 			cytochromeChemicalCompoundInhibitionPatterns = cytochromeChemicalCompoundInhibitionPatternDao.findAll();
 			log.debug("DictionaryServiceImpl :: execute :: cytochrome compound inhibition relations");
 			
+			log.debug("DictionaryServiceImpl :: execute :: loading cytochrome compound inhibition relations");
+			markerChemicalCompoundPatterns = markerChemicalCompoundPatternDao.findAll();
+			log.debug("DictionaryServiceImpl :: execute :: cytochrome compound inhibition relations");
+			
+			
+			
 		} catch (Exception e) {
 			log.error("DictionaryServiceImpl :: execute :: loading dictionaries ", e );
 			System.out.println(e);
@@ -140,50 +175,41 @@ public class DictionaryServiceImpl implements DictionaryService{
 	
 	}
 	
-	
+	public List<Taxonomy> getTaxonomies() {
+		return taxonomies;
+	}
+
+	public void setTaxonomies(List<Taxonomy> taxonomies) {
+		this.taxonomies = taxonomies;
+	}
+
 	public List<ChemicalCompound> getChemicalCompounds() {
 		return chemicalCompounds;
 	}
-
-
 
 	public void setChemicalCompounds(List<ChemicalCompound> chemicalCompounds) {
 		this.chemicalCompounds = chemicalCompounds;
 	}
 
-
-
 	public List<HepatotoxicityTerm> getHepatotoxicityTerms() {
 		return hepatotoxicityTerms;
 	}
-
-
 
 	public void setHepatotoxicityTerms(List<HepatotoxicityTerm> hepatotoxicityTerms) {
 		this.hepatotoxicityTerms = hepatotoxicityTerms;
 	}
 
-
-
 	public List<Cytochrome> getCytochromes() {
 		return cytochromes;
 	}
-
-
 
 	public void setCytochromes(List<Cytochrome> cytochromes) {
 		this.cytochromes = cytochromes;
 	}
 
-	
-
 	public List<Marker> getMarkers() {
 		return markers;
 	}
-
-	
-	
-
 
 	public List<ChemicalCompoundHepatotoxicityTermPattern> getChemicalCompoundHepatotoxicityTermPatterns() {
 		return chemicalCompoundHepatotoxicityTermPatterns;
@@ -197,8 +223,6 @@ public class DictionaryServiceImpl implements DictionaryService{
 	public void setMarkers(List<Marker> markers) {
 		this.markers = markers;
 	}
-
-
 
 	public List<CytochromeChemicalCompoundMetabolismPattern> getCytochromeChemicalCompoundPatterns() {
 		return cytochromeChemicalCompoundPatterns;
@@ -227,17 +251,20 @@ public class DictionaryServiceImpl implements DictionaryService{
 		this.cytochromeChemicalCompoundInhibitionPatterns = cytochromeChemicalCompoundInhibitionPatterns;
 	}
 
-
 	public List<MeshChemicalCompound> getMeshChemicalCompounds() {
 		return meshChemicalCompounds;
 	}
-
 
 	public void setMeshChemicalCompounds(List<MeshChemicalCompound> meshChemicalCompounds) {
 		this.meshChemicalCompounds = meshChemicalCompounds;
 	}
 
-	
-	
+	public List<MarkerChemicalCompoundPattern> getMarkerChemicalCompoundPatterns() {
+		return markerChemicalCompoundPatterns;
+	}
+
+	public void setMarkerChemicalCompoundPatterns(List<MarkerChemicalCompoundPattern> markerChemicalCompoundPatterns) {
+		this.markerChemicalCompoundPatterns = markerChemicalCompoundPatterns;
+	}
 	
 }

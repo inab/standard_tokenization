@@ -2,10 +2,10 @@ package es.bsc.inb.limtox.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-public class CytochromeSentence {
+public class TaxonomySentence {
 	private Integer id;
 	
-	private Cytochrome cytochrome;
+	private Taxonomy taxonomy;
 	
 	private Float score;
 	
@@ -15,10 +15,10 @@ public class CytochromeSentence {
 	private Sentence sentence;
 		
 
-	public CytochromeSentence() {}
+	public TaxonomySentence() {}
 	
-	public CytochromeSentence(Cytochrome cytochrome, Float score, Integer quantity, Sentence sentence) {
-		this.cytochrome = cytochrome;
+	public TaxonomySentence(Taxonomy taxonomy, Float score, Integer quantity, Sentence sentence) {
+		this.taxonomy = taxonomy;
 		this.score = score;
 		this.quantity = quantity;
 		this.sentence = sentence;
@@ -34,12 +34,12 @@ public class CytochromeSentence {
 	
 	
 
-	public Cytochrome getCytochrome() {
-		return cytochrome;
+	public Taxonomy getTaxonomy() {
+		return taxonomy;
 	}
 
-	public void setCytochrome(Cytochrome cytochrome) {
-		this.cytochrome = cytochrome;
+	public void setTaxonomy(Taxonomy taxonomy) {
+		this.taxonomy = taxonomy;
 	}
 
 	public Float getScore() {

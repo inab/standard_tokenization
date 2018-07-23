@@ -42,7 +42,7 @@ public class MainServiceImpl {
 		start = System.nanoTime();
 		dictionaryService.execute();
 		//sectionService.execute();
-		File root = new File("/home/jcorvi/text_mining_data_test/pubmed_data/standardization/baseline/4");
+		File root = new File("/home/jcorvi/text_mining_data_test/pubmed_data/standardization/baseline/2");
 		for (File  file : root.listFiles(new FileFilterTxt())) { 
 			try {
 				String pmid = file.getName().substring(4, file.getName().indexOf('.'));
@@ -52,7 +52,7 @@ public class MainServiceImpl {
 			}
 		}
 		stop = System.nanoTime();
-		System.out.println("Contains: " + (stop-start));
+		System.out.println("Seconds: " + (stop-start)/1000000000.0);
 	}
 
 
