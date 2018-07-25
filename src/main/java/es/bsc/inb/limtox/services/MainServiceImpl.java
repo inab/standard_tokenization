@@ -8,7 +8,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import es.bsc.inb.limtox.retrieval.services.GenericRetrievalService;
-import es.bsc.inb.limtox.util.file.FileFilterTxt;
+import es.bsc.inb.limtox.util.file.FileFilterXML;
 
 @PropertySource({ "classpath:limtox.properties" })
 @Service
@@ -42,7 +42,7 @@ public class MainServiceImpl {
 		start = System.nanoTime();
 		dictionaryService.execute();
 		File root = new File("/home/jcorvi/text_mining_data_test/pubmed_data/standardization/baseline/2");
-		for (File  file : root.listFiles(new FileFilterTxt())) { 
+		for (File  file : root.listFiles(new FileFilterXML())) { 
 			try {
 				String pmid = file.getName().substring(4, file.getName().indexOf('.'));
 				standardTokenizationService.execute(pmid,file.getAbsolutePath());
