@@ -41,7 +41,6 @@ public class MainServiceImpl {
 		long stop=0;
 		start = System.nanoTime();
 		dictionaryService.execute();
-		//sectionService.execute();
 		File root = new File("/home/jcorvi/text_mining_data_test/pubmed_data/standardization/baseline/2");
 		for (File  file : root.listFiles(new FileFilterTxt())) { 
 			try {

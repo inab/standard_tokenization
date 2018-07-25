@@ -19,15 +19,15 @@ import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-@Configuration
-@PropertySource({ "classpath:databases.properties" })
-@EnableTransactionManagement
+//@Configuration
+//@PropertySource({ "classpath:databases.properties" })
+//@EnableTransactionManagement
 public class PersistenceJPAConfig{
 	
-	@Autowired
+	//@Autowired
     private Environment env; 
 	
-	@Bean(name="modelEntityManagerFactory")
+	//@Bean(name="modelEntityManagerFactory")
 	public LocalContainerEntityManagerFactoryBean modelEntityManagerFactory() {
 		LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
 		em.setDataSource(dataSource());
@@ -39,7 +39,7 @@ public class PersistenceJPAConfig{
 		return em;
 	}
  
-	@Bean
+	//@Bean
 	public DataSource dataSource(){
 		DriverManagerDataSource dataSource = new DriverManagerDataSource();
 		dataSource.setDriverClassName(env.getProperty("limtox.jdbc.driverClassName"));
@@ -49,7 +49,7 @@ public class PersistenceJPAConfig{
 		return dataSource;
 	}
  
-	@Bean
+	//@Bean
 	public PlatformTransactionManager transactionManager(EntityManagerFactory modelEntityManagerFactory){
 		JpaTransactionManager transactionManager = new JpaTransactionManager();
 		transactionManager.setEntityManagerFactory(modelEntityManagerFactory);
@@ -57,7 +57,7 @@ public class PersistenceJPAConfig{
 		return transactionManager;
 	}
  
-	@Bean
+	//@Bean
 	public PersistenceExceptionTranslationPostProcessor exceptionTranslation(){
 		return new PersistenceExceptionTranslationPostProcessor();
 	}

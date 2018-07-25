@@ -18,9 +18,6 @@ import es.bsc.inb.limtox.model.MarkerChemicalCompoundPattern;
 
 @Repository(value="markerChemicalCompoundPatternDaoJSONImpl")
 public class MarkerChemicalCompoundPatternDaoJSONImpl extends GenericDaoJSONImpl<MarkerChemicalCompoundPattern> implements MarkerChemicalCompoundPatternDao {
-
-
-
 	
 	@Override
     public List<MarkerChemicalCompoundPattern> findAll() {
@@ -29,6 +26,7 @@ public class MarkerChemicalCompoundPatternDaoJSONImpl extends GenericDaoJSONImpl
 		try {
 			String json_string = unzipDictionary(env.getProperty("limtox.dictionary.limtox_marker_pattern"));
 			JsonNode data = mapper.readTree(json_string);
+			data = data.path("limtox_marker_pattern");
 			List<MarkerChemicalCompoundPattern> myObjects = Arrays.asList(mapper.readValue(data.toString(), MarkerChemicalCompoundPattern[].class));
 			return myObjects;
 		} catch (JsonParseException e) {

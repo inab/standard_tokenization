@@ -70,90 +70,10 @@ public class StandardTokenizationServiceImpl {
 	private DocumentDao documentDao;
 	@Autowired
 	private DictionaryService dictionaryService;
-	@Autowired
-	private SectionService sectionService;
-	@Autowired
-	private ChemSpotConfig chemSpotConfig;
-	
 	
 	protected Log log = LogFactory.getLog(this.getClass());
 	
 	private HashMap<String, Pattern> patterns = new HashMap<String,Pattern>();
-	
-//	public void execute(String sourceId, String file_path) {
-//		try {
-//			StanfordCoreNLP pipeline = CoreNLP.getStandfordCoreNLP();
-//			String text = StringUtil.readFile(file_path, Charset.forName("UTF-8"));
-//			Annotation document= new Annotation(text);
-//		    pipeline.annotate(document);
-//			List<CoreMap> sentences = document.get(SentencesAnnotation.class);
-//			
-//			PubMedDocument document_model = new PubMedDocument(sourceId);
-//			Section section = null;
-//			Boolean read_mesh_key_words = false;
-//			Boolean text_end = false;
-//			for (CoreMap sentence: sentences) {
-//				String sentence_text_original = sentence.get(TextAnnotation.class);
-//				String sentence_text=sentence_text_original;
-//				Sentence sentence_model = new Sentence(document_model, sentence_text, section);
-//				sentence_model.setDocument(document_model);
-//				
-//				//text_mining_example(sentence);
-//				//CoreDocument document_ = new CoreDocument(text);
-//				//List<CoreSentence> sentence_ = document_.sentences();
-//				if(sentence_text_original!=null && sentence_text_original.equals("<KEYWORDS_LIMTOX>.")) {
-//					text_end = true;
-//				}else if(sentence_text_original!=null && sentence_text_original.equals("<KEYWORDS_MESHCHEMICAL_LIMTOX>.")) {
-//					read_mesh_key_words = true;
-//				}else if(read_mesh_key_words) {
-//					//index document with keywords
-//					System.out.println("CHEMICAL MESH KEYWORD " + sentence_text_original);
-//					String[] chemical_mesh = sentence_text_original.split("/n");
-//					System.out.println("CHEMICAL MESH KEYWORD " + chemical_mesh);
-//					read_mesh_key_words=false;
-//				} else if(!text_end && sectionService.getSection(sentence_text_original)!=null) {
-//					section=sectionService.getSection(sentence_text_original);
-//				}else if(!text_end){
-//						//document text sentence to index.
-//						//Set the chemical compounds present into the sentence
-//						findChemicalCompounds(sentence_model, sentence_text);
-//						//Set the hepatotoxicity terms present into the sentence
-//						findHepatotoxicityTerms(sentence_model, sentence_text);
-//						//Set the markers present into the sentence
-//						findMarkers(sentence_model, sentence_text);
-//						//Set the Cytochromes present into the sentence
-//						findCytochromes(sentence_model, sentence_text);
-//						//Find relations between chemical compounds and hepatotoxicity terms in the sentence
-//						findChemicalCompoundHepatotoxicityRelations(sentence_model, sentence_text);
-//						//Find relations between chemical compounds and Cytochromes  in the sentence
-//						findChemicalCompoundCytochromeRelations(sentence_model, sentence_text);
-//						//Find relations between chemical compounds and Markers  in the sentence
-//						findMarkerChemicalCompoundRelations(sentence_model, sentence_text);
-//					
-//					}
-//				if(sentence_model!=null && (sentence_model.getChemicalCompoundSentences().size()>0 || 
-//						sentence_model.getHepatotoxicityTermSentences().size()>0 ||
-//						sentence_model.getCytochromeSentences().size()>0 ||
-//						sentence_model.getMarkerSentences().size()>0 ||
-//						sentence_model.getChemicalCompoundCytochromeSentences().size()>0 ||
-//						sentence_model.getMarkerChemicalCompoundSentences().size()>0 ||
-//						sentence_model.getHepatotoxicityTermChemicalCompoundSentences().size()>0)) {
-//						document_model.getSentences().add(sentence_model);
-//				}
-//			}
-//			if (document_model!=null && document_model.getSentences().size()>0) {
-//				documentDao.save(document_model);
-//			}
-//		} catch (IOException e) {
-//			log.error("StandardTokenizerServiceImpl :: execute :: Processiong the document " + file_path, e );
-//			System.out.println(e);
-//			e.printStackTrace();
-//		} catch (Exception e) {
-//			log.error("StandardTokenizerServiceImpl :: execute :: Processiong the document " + file_path, e );
-//			System.out.println(e);
-//			e.printStackTrace();
-//		}
-//	}
 	
 	public void execute(String sourceId, String file_path) {
 		try {
@@ -301,7 +221,7 @@ public class StandardTokenizationServiceImpl {
 	 * @return
 	 */
 	private int sentenceContains(String key_to_search, String sentence) {
-		if(key_to_search!=null && !key_to_search.trim().equals("")) {
+		if(key_to_search!=null && !key_to_search.trim().equals("") && !key_to_search.trim().equals(".")) {
 			Pattern pattern = patterns.get(key_to_search);
 			if(pattern==null) {
 				String to_search = Pattern.quote(key_to_search);
@@ -430,7 +350,7 @@ public class StandardTokenizationServiceImpl {
 				sentence.getMarkerChemicalCompoundSentences().add(markerChemicalCompoundSentence);
 				Boolean cut = false;
 				String type = "";
-				for (MarkerChemicalCompoundPattern pattern : dictionaryService.getMarkerChemicalCompoundPatterns()) {
+				/*for (MarkerChemicalCompoundPattern pattern : dictionaryService.getMarkerChemicalCompoundPatterns()) {
 					String pattern_text = pattern.getMarker_pattern();
 					type = pattern.getPattern_type();
 					pattern_text = pattern_text.replace("[chemical]", chemicalCompoundSentence.getChemicalCompound().getName());
@@ -450,7 +370,7 @@ public class StandardTokenizationServiceImpl {
 							break;
 						}
 					}
-				}
+				}*/
 				//Save Comention Compound and Cysp
 				System.out.println("compound marker: " + chemicalCompoundSentence.getChemicalCompound().getName() + " and " + markerSentence.getMarker().getMarker_full_name());
 			}	

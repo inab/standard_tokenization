@@ -68,10 +68,8 @@ public class DictionaryServiceImpl implements DictionaryService{
 	@Autowired
 	private TaxonomyDao taxonomyDao;
 	
-	/**
-	 * Relation between Chemical compounds and Hepatotoxicity Term
-	 */
-	private MarkerChemicalCompoundPatternDao markerChemicalCompoundPatternDao = null;
+	@Autowired
+	private MarkerChemicalCompoundPatternDao markerChemicalCompoundPatternDao;
 	
 	/**
 	 * Chemical compounds Dictionary
