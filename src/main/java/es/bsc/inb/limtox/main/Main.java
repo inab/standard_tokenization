@@ -12,6 +12,6 @@ class Main {
         ctx.register(AppConfig.class);
         ctx.refresh();
         MainServiceImpl mainService = (MainServiceImpl)ctx.getBean("mainServiceImpl");
-        mainService.execute();
+        mainService.execute2();
     }      
 }

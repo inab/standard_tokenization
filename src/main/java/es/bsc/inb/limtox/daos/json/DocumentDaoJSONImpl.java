@@ -22,8 +22,7 @@ public class DocumentDaoJSONImpl extends GenericDaoJSONImpl<Document> implements
 		objectMapper.setSerializationInclusion(Include.NON_NULL);
 		objectMapper.setSerializationInclusion(Include.NON_EMPTY);
 		try {
-			String path = env.getProperty("limtox.input.folder");
-			objectMapper.writeValue(new File(path+"pubmed_data/findings/baseline/1/"+document.getSourceId()+".json"), document);
+			objectMapper.writeValue(new File(document.getOutputPath()+"/"+document.getSourceId()+".json"), document);
 		} catch (JsonGenerationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

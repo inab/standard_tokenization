@@ -15,11 +15,16 @@ public abstract class Document implements LimtoxEntity {
 	
 	private List<MeshChemicalCompound> meshChemicalCompounds = new ArrayList<MeshChemicalCompound>();
 	
+	private String outputPath;
+	
+	private Double executionTime;
+	
 	public Document() {
 		super();
 	}
-	public Document(String sourceId) {
+	public Document(String sourceId, String outputPath) {
 		this.sourceId=sourceId;
+		this.outputPath=outputPath;
 	}
 	
 	public Integer getId() {
@@ -51,6 +56,19 @@ public abstract class Document implements LimtoxEntity {
 	public void setMeshChemicalCompounds(List<MeshChemicalCompound> meshChemicalCompounds) {
 		this.meshChemicalCompounds = meshChemicalCompounds;
 	}
+	public String getOutputPath() {
+		return outputPath;
+	}
+	public void setOutputPath(String outputPath) {
+		this.outputPath = outputPath;
+	}
+	public Double getExecutionTime() {
+		return executionTime;
+	}
+	public void setExecutionTime(Double executionTime) {
+		this.executionTime = executionTime;
+	}
+	
 	
 	
 	

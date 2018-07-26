@@ -1,12 +1,16 @@
 package es.bsc.inb.limtox.services;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
+import es.bsc.inb.limtox.retrieval.model.PubMedArticle;
 import es.bsc.inb.limtox.retrieval.services.GenericRetrievalService;
 import es.bsc.inb.limtox.util.file.FileFilterXML;
 
@@ -21,20 +25,43 @@ public class MainServiceImpl {
 	GenericRetrievalService genericRetrievalService;
 	@Autowired
 	DictionaryService dictionaryService;
-	@Autowired
-	SectionService sectionService;
-//	public void execute() {
-//		dictionaryService.execute();
-//		sectionService.execute();
-//		List<PubMedArticle>  pubMedArticles = genericRetrievalService.findAllPubMedArticleToProcess();
-//		for (PubMedArticle pubMedArticle : pubMedArticles) {
-//			try {
-//				standardTokenizationService.execute(pubMedArticle.getPmid(), env.getProperty("limtox.input.folder")+"/pubmed_data/standardization/"+pubMedArticle.getFilePath()+"/"+pubMedArticle.getFileName()+".txt");
-//			}catch(Exception e) {
-//				e.printStackTrace();
-//			}
-//		}
-//	}
+
+	public void execute2() {
+		System.out.println("Comienzo");
+		long start=0;
+		long stop=0;
+		start = System.nanoTime();
+		String work_path = env.getProperty("limtox.input.folder");
+		dictionaryService.execute();
+		List<PubMedArticle>  pubMedArticles = genericRetrievalService.findAllPubMedArticleToProcess();
+		int i=0;
+		for (PubMedArticle pubMedArticle : pubMedArticles) {
+			i=i+1;
+			try {
+				String input_path = work_path+"/pubmed/standardization/"+pubMedArticle.getFilePath();
+				if (Files.isRegularFile(Paths.get(input_path+"/"+pubMedArticle.getFileName()+".xml"))) {
+					String output_path = work_path+"/pubmed/findings/"+pubMedArticle.getFilePath();
+					Boolean success=true;
+					if (!Files.isDirectory(Paths.get(output_path))) {
+						 success = (new File(output_path)).mkdirs();
+					}
+					if(success) {
+						standardTokenizationService.execute(pubMedArticle.getPmid(), input_path+"/"+pubMedArticle.getFileName()+".xml",  output_path);
+					}else {
+						//error in creation of output directory
+					}
+				}else {
+					//file not exist show error.
+
+					
+				}
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
+		stop = System.nanoTime();
+		System.out.println("Seconds: " + (stop-start)/1000000000.0);
+	}
 	
 	public void execute() {
 		long start=0;
@@ -45,7 +72,7 @@ public class MainServiceImpl {
 		for (File  file : root.listFiles(new FileFilterXML())) { 
 			try {
 				String pmid = file.getName().substring(4, file.getName().indexOf('.'));
-				standardTokenizationService.execute(pmid,file.getAbsolutePath());
+				//standardTokenizationService.execute(pmid,file.getAbsolutePath());
 			}catch(Exception e) {
 				e.printStackTrace();
 			}

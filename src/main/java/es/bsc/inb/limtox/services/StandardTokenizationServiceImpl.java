@@ -18,8 +18,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import de.berlin.hu.chemspot.ChemSpot;
-import de.berlin.hu.chemspot.Mention;
 import edu.stanford.nlp.ling.CoreAnnotations.LemmaAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.NamedEntityTagAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.PartOfSpeechAnnotation;
@@ -34,7 +32,6 @@ import edu.stanford.nlp.semgraph.SemanticGraphCoreAnnotations.CollapsedCCProcess
 import edu.stanford.nlp.trees.Tree;
 import edu.stanford.nlp.trees.TreeCoreAnnotations.TreeAnnotation;
 import edu.stanford.nlp.util.CoreMap;
-import es.bsc.inb.limtox.config.ChemSpotConfig;
 import es.bsc.inb.limtox.daos.DocumentDao;
 import es.bsc.inb.limtox.exceptions.MoreThanOneEntityException;
 import es.bsc.inb.limtox.model.ChemicalCompound;
@@ -50,17 +47,19 @@ import es.bsc.inb.limtox.model.HepatotoxicityTerm;
 import es.bsc.inb.limtox.model.HepatotoxicityTermChemicalCompoundSentence;
 import es.bsc.inb.limtox.model.HepatotoxicityTermSentence;
 import es.bsc.inb.limtox.model.Marker;
-import es.bsc.inb.limtox.model.MarkerChemicalCompoundPattern;
 import es.bsc.inb.limtox.model.MarkerChemicalCompoundSentence;
 import es.bsc.inb.limtox.model.MarkerSentence;
 import es.bsc.inb.limtox.model.MeshChemicalCompound;
+import es.bsc.inb.limtox.model.Ocurrence;
 import es.bsc.inb.limtox.model.PubMedDocument;
 import es.bsc.inb.limtox.model.RelationRule;
 import es.bsc.inb.limtox.model.Section;
 import es.bsc.inb.limtox.model.Sentence;
 import es.bsc.inb.limtox.model.Taxonomy;
 import es.bsc.inb.limtox.model.TaxonomySentence;
+import es.bsc.inb.limtox.util.Constants;
 import es.bsc.inb.limtox.util.CoreNLP;
+import es.bsc.inb.limtox.util.ResultSummaryUtil;
 import es.bsc.inb.limtox.util.XMLUtil;
 
 
@@ -75,23 +74,34 @@ public class StandardTokenizationServiceImpl {
 	
 	private HashMap<String, Pattern> patterns = new HashMap<String,Pattern>();
 	
-	public void execute(String sourceId, String file_path) {
+	public void execute(String sourceId, String file_path, String outputPath) {
 		try {
+			DocumentBuilder dBuilder = XMLUtil.getDocumentBuilder();
+			log.debug(sourceId);
+			long start=0;
+			long stop=0;
+			start = System.nanoTime();
 			File xmlFile = new File(file_path);
-	        DocumentBuilder dBuilder = XMLUtil.getDocumentBuilder();
 	        Document doc = dBuilder.parse(xmlFile);
 	        doc.getDocumentElement().normalize();
-	        PubMedDocument document_model = new PubMedDocument(sourceId);
+	        PubMedDocument document_model = new PubMedDocument(sourceId, outputPath);
 	        this.findingsInTextSections(doc, document_model);
 		    this.findingsKeywords(doc, document_model);
 		    if (document_model!=null && (document_model.getSentences().size()>0 || document_model.getMeshChemicalCompounds().size()>0)) {
+		    	stop = System.nanoTime();
+		    	document_model.setExecutionTime((stop-start)/1000000000.0);
 		    	documentDao.save(document_model);
+		    	ResultSummaryUtil.addRelevantArticle(sourceId);
+		    }else {
+		    	ResultSummaryUtil.addNonRelevantArticle(sourceId);
 		    }
 	    }catch (IOException e) {
+	    	ResultSummaryUtil.addArticlesErrors(sourceId);
 			log.error("StandardTokenizerServiceImpl :: execute :: Processiong the document " + file_path, e );
 			System.out.println(e);
 			e.printStackTrace();
 		} catch (Exception e) {
+			ResultSummaryUtil.addArticlesErrors(sourceId);
 			log.error("StandardTokenizerServiceImpl :: execute :: Processiong the document " + file_path, e );
 			System.out.println(e);
 			e.printStackTrace();
@@ -220,7 +230,7 @@ public class StandardTokenizationServiceImpl {
 	 * @param sentence
 	 * @return
 	 */
-	private int sentenceContains(String key_to_search, String sentence) {
+	private int sentenceContains_old(String key_to_search, String sentence, String keyType) {
 		if(key_to_search!=null && !key_to_search.trim().equals("") && !key_to_search.trim().equals(".")) {
 			Pattern pattern = patterns.get(key_to_search);
 			if(pattern==null) {
@@ -233,14 +243,47 @@ public class StandardTokenizationServiceImpl {
 			Integer count = 0;
 			while (m.find()) {
 				count++;
-				m.start();
-				m.end();
-				System.out.println("\t" + m.start() + "\t" + m.end() + "\t" +  sentence.substring(m.start(), m.end()));
+				log.debug("\t" + m.start() + "\t" + m.end() + "\t" +  sentence.substring(m.start(), m.end()) + "\t" +  keyType);
+				//System.out.println("\t" + m.start() + "\t" + m.end() + "\t" +  sentence.substring(m.start(), m.end()));
 			}
 			return count;
 		}
 		return 0;
 	}
+	
+	
+	/**
+	 * 
+	 * @param key_to_search
+	 * @param sentence
+	 * @return
+	 */
+	private List<Ocurrence> sentenceContains(String key_to_search, String sentence, String keyType) {
+		if(key_to_search!=null && !key_to_search.trim().equals("") && !key_to_search.trim().equals(".")) {
+			Pattern pattern = patterns.get(key_to_search);
+			if(pattern==null) {
+				String to_search = Pattern.quote(key_to_search);
+		    	String patternString = "\\b(" + to_search + ")\\b";
+			    pattern = Pattern.compile(patternString);
+			    patterns.put(key_to_search, pattern);
+			}
+			Matcher m = pattern.matcher(sentence);
+			Integer count = 0;
+			List<Ocurrence> ocurrences = null;
+			while (m.find()) {
+				count++;
+				if(count==1) {
+					ocurrences = new ArrayList<Ocurrence>();
+				}
+				ocurrences.add(new Ocurrence(m.start(), m.end()));
+				log.debug("\t" + m.start() + "\t" + m.end() + "\t" +  sentence.substring(m.start(), m.end()) + "\t" +  keyType);
+				//System.out.println("\t" + m.start() + "\t" + m.end() + "\t" +  sentence.substring(m.start(), m.end()));
+			}
+			return ocurrences;
+		}
+		return null;
+	}
+	
 	/**
 	 * 
 	 * @param document_model
@@ -261,8 +304,8 @@ public class StandardTokenizationServiceImpl {
 					String pattern_text = pattern.getCyp_induction_pattern();
 					pattern_text = pattern_text.replace("[substance]", chemicalCompoundSentence.getChemicalCompound().getName());
 					pattern_text = pattern_text.replace("[p450_cyps]", cytochromeSentence.getCytochrome().getName());
-					int quantity_pattern = sentenceContains(pattern_text, sentence_text);
-					if(quantity_pattern!=0) {
+					List<Ocurrence> ocurrences = sentenceContains(pattern_text, sentence_text, Constants.CYPS_CHEM_PAT_IND);
+					if(ocurrences!=null) {
 						chemicalCompoundCytochromeSentence.setRelationRule(RelationRule.INDUCTION);
 						cut=true;
 						break;
@@ -274,8 +317,8 @@ public class StandardTokenizationServiceImpl {
 						String pattern_text = pattern.getCyp_inhibition_pattern();
 						pattern_text = pattern_text.replace("[substance]", chemicalCompoundSentence.getChemicalCompound().getName());
 						pattern_text = pattern_text.replace("[p450_cyps]", cytochromeSentence.getCytochrome().getName());
-						int quantity_pattern = sentenceContains(pattern_text, sentence_text);
-						if(quantity_pattern!=0) {
+						List<Ocurrence> ocurrences = sentenceContains(pattern_text, sentence_text, Constants.CYPS_CHEM_PAT_INH);
+						if(ocurrences!=null) {
 							chemicalCompoundCytochromeSentence.setRelationRule(RelationRule.INHIBITION);
 							cut=true;
 							break;
@@ -288,17 +331,21 @@ public class StandardTokenizationServiceImpl {
 						String pattern_text = pattern.getSubstrate_pattern();
 						pattern_text = pattern_text.replace("[substance]", chemicalCompoundSentence.getChemicalCompound().getName());
 						pattern_text = pattern_text.replace("[p450_cyps]", cytochromeSentence.getCytochrome().getName());
-						int quantity_pattern = sentenceContains(pattern_text, sentence_text);
-						if(quantity_pattern!=0) {
+						List<Ocurrence> ocurrences = sentenceContains(pattern_text, sentence_text, Constants.CYPS_CHEM_PAT_MET);
+						if(ocurrences!=null) {
 							chemicalCompoundCytochromeSentence.setRelationRule(RelationRule.METABOLISM);
 							cut=true;
 							break;
 						}
 					}
-				}	
+				}
+				if(!cut) {
+					log.debug("\t" + " " + "\t" + " " + "\t" +  chemicalCompoundSentence.getChemicalCompound().getName() + "\t" + cytochromeSentence.getCytochrome().getName() + "\t" + " COMENTION ");
+					//System.out.println("\t" + " " + "\t" + " " + "\t" +  chemicalCompoundSentence.getChemicalCompound().getName() + "\t" + cytochromeSentence.getCytochrome().getName() + "\t" + " COMENTION ");
+				}
 				//Otra opcion seria verificar si entre medio hay palabras claves ... induction induce etc
 				//Save Comention Compound and Cysp
-				System.out.println("relation compound-cys: " + chemicalCompoundSentence.getChemicalCompound().getName() + " and " + cytochromeSentence.getCytochrome().getName());
+				//System.out.println("relation compound-cys: " + chemicalCompoundSentence.getChemicalCompound().getName() + " and " + cytochromeSentence.getCytochrome().getName());
 			}
 		}
 	}
@@ -322,13 +369,14 @@ public class StandardTokenizationServiceImpl {
 					String pattern_text = pattern.getAdverse_pattern();
 					pattern_text = pattern_text.replace("[substance]", chemicalCompoundSentence.getChemicalCompound().getName());
 					pattern_text = pattern_text.replace("[adverse_effect]", hepatotoxicityTermSentence.getHepatotoxicityTerm().getOriginal_entry());
-					int quantity_pattern = sentenceContains(pattern_text, sentence_text);
-					if(quantity_pattern!=0) {
+					List<Ocurrence> ocurrences = sentenceContains(pattern_text, sentence_text, Constants.ADVERSE_EFFECT);
+					if(ocurrences!=null) {
 						hepatotoxicityTermChemicalCompoundSentence.setRelationRule(RelationRule.ADVERSE_EFFECT);
 						break;
 					}
 				}
-				System.out.println("relation compound hepatotoxicityterm: " + chemicalCompoundSentence.getChemicalCompound().getName() + " and " + hepatotoxicityTermSentence.getHepatotoxicityTerm().getOriginal_entry());
+				log.debug("\t" + " " + "\t" + " " + "\t" +  chemicalCompoundSentence.getChemicalCompound().getName() + "\t" + hepatotoxicityTermSentence.getHepatotoxicityTerm().getOriginal_entry() + "\t" + " COMENTION ");
+				//System.out.println("relation compound hepatotoxicityterm: " + chemicalCompoundSentence.getChemicalCompound().getName() + " and " + hepatotoxicityTermSentence.getHepatotoxicityTerm().getOriginal_entry());
 			}	
 			
 		}	
@@ -372,7 +420,8 @@ public class StandardTokenizationServiceImpl {
 					}
 				}*/
 				//Save Comention Compound and Cysp
-				System.out.println("compound marker: " + chemicalCompoundSentence.getChemicalCompound().getName() + " and " + markerSentence.getMarker().getMarker_full_name());
+				log.debug("\t" + " " + "\t" + " " + "\t" +  chemicalCompoundSentence.getChemicalCompound().getName() + "\t" + markerSentence.getMarker().getMarker_full_name() + "\t" + " COMENTION ");
+				//System.out.println("compound marker: " + chemicalCompoundSentence.getChemicalCompound().getName() + " and " + markerSentence.getMarker().getMarker_full_name());
 			}	
 		}
 	}
@@ -386,9 +435,9 @@ public class StandardTokenizationServiceImpl {
 	 */
 	private void findMarkers(Sentence sentence, String sentence_text) {
 		for (Marker marker : dictionaryService.getMarkers()) {
-			int quantity = sentenceContains(marker.getMarker_full_name(), sentence_text);
-			if(quantity!=0) {
-				MarkerSentence markerSentence = new MarkerSentence(marker,1f, quantity, sentence);
+			List<Ocurrence> ocurrences= sentenceContains(marker.getMarker_full_name(), sentence_text, Constants.MARKER);
+			if(ocurrences!=null) {
+				MarkerSentence markerSentence = new MarkerSentence(marker,1f, ocurrences.size(), ocurrences, sentence);
 				sentence.getMarkerSentences().add(markerSentence);
 			}
 		}
@@ -403,9 +452,9 @@ public class StandardTokenizationServiceImpl {
 	 */
 	private void findHepatotoxicityTerms(Sentence sentence, String sentence_text) {
 		for (HepatotoxicityTerm hepatotoxicityTerm : dictionaryService.getHepatotoxicityTerms()) {
-			int quantity = sentenceContains(hepatotoxicityTerm.getOriginal_entry(), sentence_text);
-			if(quantity!=0) {
-				HepatotoxicityTermSentence hepatotoxicityTermSentence = new HepatotoxicityTermSentence(hepatotoxicityTerm,1f, quantity, sentence);
+			List<Ocurrence> ocurrences= sentenceContains(hepatotoxicityTerm.getOriginal_entry(), sentence_text, Constants.HEPATOTOXICITY);
+			if(ocurrences!=null) {
+				HepatotoxicityTermSentence hepatotoxicityTermSentence = new HepatotoxicityTermSentence(hepatotoxicityTerm,1f, ocurrences.size(), ocurrences, sentence);
 				sentence.getHepatotoxicityTermSentences().add(hepatotoxicityTermSentence);
 			}
 		}
@@ -420,9 +469,9 @@ public class StandardTokenizationServiceImpl {
 	 */
 	private void findSpecies(Sentence sentence, String sentence_text) {
 		for (Taxonomy taxonomy : dictionaryService.getTaxonomies()) {
-			int quantity = sentenceContains(taxonomy.getName(), sentence_text);
-			if(quantity!=0) {
-				TaxonomySentence taxonomySentence = new TaxonomySentence(taxonomy,1f, quantity, sentence);
+			List<Ocurrence> ocurrences = sentenceContains(taxonomy.getName(), sentence_text, Constants.SPECIES);
+			if(ocurrences!=null) {
+				TaxonomySentence taxonomySentence = new TaxonomySentence(taxonomy,1f, ocurrences.size(), ocurrences, sentence);
 				sentence.getTaxonomySentences().add(taxonomySentence);
 			}
 		}
@@ -455,18 +504,18 @@ public class StandardTokenizationServiceImpl {
 	private void findChemicalCompounds(Sentence sentence, String sentence_text) {
 		for (ChemicalCompound chemicalCompound : dictionaryService.getChemicalCompounds()) {
 			//Find and store differentes chemicalCompounds Key Words
-			this.findChemicalCompoundByFieldType(chemicalCompound.getName(), sentence_text, sentence, chemicalCompound);
-			this.findChemicalCompoundByFieldType(chemicalCompound.getSmile(), sentence_text, sentence, chemicalCompound);
-			this.findChemicalCompoundByFieldType(chemicalCompound.getInchi(), sentence_text, sentence, chemicalCompound);
-			this.findChemicalCompoundByFieldType(chemicalCompound.getChemPlusId(), sentence_text, sentence, chemicalCompound);
-			this.findChemicalCompoundByFieldType(chemicalCompound.getChebi(), sentence_text, sentence, chemicalCompound);
-			this.findChemicalCompoundByFieldType(chemicalCompound.getDrugBankId(), sentence_text, sentence, chemicalCompound);
-			this.findChemicalCompoundByFieldType(chemicalCompound.getKeggCompoundId(), sentence_text, sentence, chemicalCompound);
-			this.findChemicalCompoundByFieldType(chemicalCompound.getMeshSubstanceId(), sentence_text, sentence, chemicalCompound);
-			this.findChemicalCompoundByFieldType(chemicalCompound.getCasRegistryNumber(), sentence_text, sentence, chemicalCompound);
-			this.findChemicalCompoundByFieldType(chemicalCompound.getHumanMetabolome(), sentence_text, sentence, chemicalCompound);
-			this.findChemicalCompoundByFieldType(chemicalCompound.getPubChemCompundId(), sentence_text, sentence, chemicalCompound);
-			this.findChemicalCompoundByFieldType(chemicalCompound.getPubChemSubstance(), sentence_text, sentence, chemicalCompound);
+			this.findChemicalCompoundByFieldType(chemicalCompound.getName(), Constants.CHEMICAL_NAME, sentence_text, sentence, chemicalCompound);
+			this.findChemicalCompoundByFieldType(chemicalCompound.getSmile(), Constants.CHEMICAL_SMILE, sentence_text, sentence, chemicalCompound);
+			this.findChemicalCompoundByFieldType(chemicalCompound.getInchi(), Constants.CHEMICAL_INCHI, sentence_text, sentence, chemicalCompound);
+			this.findChemicalCompoundByFieldType(chemicalCompound.getChemPlusId(), Constants.CHEMICAL_CHEMPLUSID, sentence_text, sentence, chemicalCompound);
+			this.findChemicalCompoundByFieldType(chemicalCompound.getChebi(), Constants.CHEMICAL_CHEBI, sentence_text, sentence, chemicalCompound);
+			this.findChemicalCompoundByFieldType(chemicalCompound.getDrugBankId(), Constants.CHEMICAL_DRUGBANKID, sentence_text, sentence, chemicalCompound);
+			this.findChemicalCompoundByFieldType(chemicalCompound.getKeggCompoundId(), Constants.KEGGCOMPOUNDID, sentence_text, sentence, chemicalCompound);
+			this.findChemicalCompoundByFieldType(chemicalCompound.getMeshSubstanceId(), Constants.MESHID, sentence_text, sentence, chemicalCompound);
+			this.findChemicalCompoundByFieldType(chemicalCompound.getCasRegistryNumber(), Constants.CASREGISTRYNUMBER, sentence_text, sentence, chemicalCompound);
+			this.findChemicalCompoundByFieldType(chemicalCompound.getHumanMetabolome(), Constants.HUMANMETABOLOME, sentence_text, sentence, chemicalCompound);
+			this.findChemicalCompoundByFieldType(chemicalCompound.getPubChemCompundId(), Constants.PUBCHEMID, sentence_text, sentence, chemicalCompound);
+			this.findChemicalCompoundByFieldType(chemicalCompound.getPubChemSubstance(), Constants.PUBCHEMSUBSTANCE, sentence_text, sentence, chemicalCompound);
 		}
 	}
 	
@@ -489,7 +538,7 @@ public class StandardTokenizationServiceImpl {
 //					mention.getINCH());
 //		}
 //	}
-	
+
 	/**
 	 * 
 	 * @param chemicalCompoundValue
@@ -499,9 +548,9 @@ public class StandardTokenizationServiceImpl {
 	 * @param chemicalCompound
 	 */
 	private void findCytochromeByFieldType(String cytochromeValue,String sentence_text,Sentence sentence, Cytochrome cytochrome) {
-		int quantity = sentenceContains(cytochromeValue, sentence_text);
-		if(quantity!=0) {
-			CytochromeSentence cytochromeSentence = new CytochromeSentence(cytochrome, 1f, quantity, sentence);
+		List<Ocurrence> ocurrences = sentenceContains(cytochromeValue, sentence_text, Constants.CYSP);
+		if(ocurrences!=null) {
+			CytochromeSentence cytochromeSentence = new CytochromeSentence(cytochrome, 1f , ocurrences.size(), ocurrences, sentence);
 			sentence.getCytochromeSentences().add(cytochromeSentence);
 		}
 	}
@@ -514,11 +563,11 @@ public class StandardTokenizationServiceImpl {
 	 * @param section
 	 * @param chemicalCompound
 	 */
-	private void findChemicalCompoundByFieldType(String chemicalCompoundValue,String sentence_text, 
+	private void findChemicalCompoundByFieldType(String chemicalCompoundValue, String chemicalCompoundValueType,String sentence_text, 
 			Sentence sentence, ChemicalCompound chemicalCompound) {
-		int quantity = sentenceContains(chemicalCompoundValue, sentence_text);
-		if(quantity!=0) {
-			ChemicalCompoundSentence chemicalCompoundSentence = new ChemicalCompoundSentence(chemicalCompound, 1f, quantity, sentence);
+		List<Ocurrence> ocurrences = sentenceContains(chemicalCompoundValue, sentence_text,chemicalCompoundValueType);
+		if(ocurrences!=null) {
+			ChemicalCompoundSentence chemicalCompoundSentence = new ChemicalCompoundSentence(chemicalCompound, 1f, ocurrences.size(), ocurrences, sentence);
 			sentence.getChemicalCompoundSentences().add(chemicalCompoundSentence);
 		}
 	}

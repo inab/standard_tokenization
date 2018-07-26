@@ -1,58 +1,25 @@
 package es.bsc.inb.limtox.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.util.List;
 
-public class MarkerSentence {
+public class MarkerSentence extends ReletavantTermSentence {
 	
 	private Marker marker;
 	
-	private Float score;
 	
-	private Integer quantity;
-	
-	@JsonIgnore
-	private Sentence sentence;
-		
 	public MarkerSentence() {}
 	
-	public MarkerSentence(Marker marker, Float score, Integer quantity, Sentence sentence) {
+	public MarkerSentence(Marker marker, Float score, Integer quantity, List<Ocurrence> ocurrences, Sentence sentence) {
+		super(score, quantity, sentence, ocurrences);
 		this.marker = marker;
-		this.score = score;
-		this.quantity = quantity;
-		this.sentence = sentence;
 	}
 
-	
 	public Marker getMarker() {
 		return marker;
 	}
 
 	public void setMarker(Marker marker) {
 		this.marker = marker;
-	}
-
-	public Float getScore() {
-		return score;
-	}
-
-	public void setScore(Float score) {
-		this.score = score;
-	}
-
-	public Integer getQuantity() {
-		return quantity;
-	}
-
-	public void setQuantity(Integer quantity) {
-		this.quantity = quantity;
-	}
-
-	public Sentence getSentence() {
-		return sentence;
-	}
-
-	public void setSentence(Sentence sentence) {
-		this.sentence = sentence;
 	}
 
 }

@@ -10,8 +10,8 @@ public class PubMedDocument extends Document{
 		super();
 	}
 	
-	public PubMedDocument(String sourceId) {
-		super(sourceId);
+	public PubMedDocument(String sourceId, String outputPath) {
+		super(sourceId, outputPath);
 	}
 	
 }
