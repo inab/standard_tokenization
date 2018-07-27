@@ -1,7 +1,7 @@
 package es.bsc.inb.limtox.model;
 
 
-public enum RelationRule {
+public enum ChemicalCompoundValueType {
    COMENTION,
    ADVERSE_EFFECT,
    INDUCTION,

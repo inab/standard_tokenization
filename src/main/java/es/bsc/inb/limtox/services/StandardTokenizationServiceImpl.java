@@ -565,7 +565,7 @@ public class StandardTokenizationServiceImpl {
 	 */
 	private void findChemicalCompoundByFieldType(String chemicalCompoundValue, String chemicalCompoundValueType,String sentence_text, 
 			Sentence sentence, ChemicalCompound chemicalCompound) {
-		List<Ocurrence> ocurrences = sentenceContains(chemicalCompoundValue, sentence_text,chemicalCompoundValueType);
+		List<Ocurrence> ocurrences = sentenceContains(chemicalCompoundValue, sentence_text, chemicalCompoundValueType);
 		if(ocurrences!=null) {
 			ChemicalCompoundSentence chemicalCompoundSentence = new ChemicalCompoundSentence(chemicalCompound, 1f, ocurrences.size(), ocurrences, sentence);
 			sentence.getChemicalCompoundSentences().add(chemicalCompoundSentence);

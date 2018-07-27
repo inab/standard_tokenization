@@ -6,6 +6,8 @@ public class ChemicalCompoundSentence extends ReletavantTermSentence{
 	
 	private ChemicalCompound chemicalCompound;
 	
+	private ChemicalCompoundValueType chemicalCompoundValueTypeFounded;
+	
 	public ChemicalCompoundSentence() {}
 	
 	public ChemicalCompoundSentence(ChemicalCompound chemicalCompound, Float score, Integer quantity, List<Ocurrence> ocurrences, Sentence sentence) {
@@ -21,4 +23,14 @@ public class ChemicalCompoundSentence extends ReletavantTermSentence{
 		this.chemicalCompound = chemicalCompound;
 	}
 
+	public ChemicalCompoundValueType getChemicalCompoundValueTypeFounded() {
+		return chemicalCompoundValueTypeFounded;
+	}
+
+	public void setChemicalCompoundValueTypeFounded(ChemicalCompoundValueType chemicalCompoundValueTypeFounded) {
+		this.chemicalCompoundValueTypeFounded = chemicalCompoundValueTypeFounded;
+	}
+
+	
+	
 }
