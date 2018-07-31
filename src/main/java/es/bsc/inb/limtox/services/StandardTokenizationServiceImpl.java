@@ -12,6 +12,7 @@ import javax.xml.parsers.DocumentBuilder;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
@@ -33,6 +34,7 @@ import edu.stanford.nlp.trees.Tree;
 import edu.stanford.nlp.trees.TreeCoreAnnotations.TreeAnnotation;
 import edu.stanford.nlp.util.CoreMap;
 import es.bsc.inb.limtox.daos.DocumentDao;
+import es.bsc.inb.limtox.exceptions.LogicalException;
 import es.bsc.inb.limtox.exceptions.MoreThanOneEntityException;
 import es.bsc.inb.limtox.model.ChemicalCompound;
 import es.bsc.inb.limtox.model.ChemicalCompoundCytochromeSentence;
@@ -57,14 +59,14 @@ import es.bsc.inb.limtox.model.Section;
 import es.bsc.inb.limtox.model.Sentence;
 import es.bsc.inb.limtox.model.Taxonomy;
 import es.bsc.inb.limtox.model.TaxonomySentence;
+import es.bsc.inb.limtox.retrieval.model.PubMedArticle;
 import es.bsc.inb.limtox.util.Constants;
 import es.bsc.inb.limtox.util.CoreNLP;
-import es.bsc.inb.limtox.util.ResultSummaryUtil;
 import es.bsc.inb.limtox.util.XMLUtil;
 
 
 @Service
-public class StandardTokenizationServiceImpl {
+public class StandardTokenizationServiceImpl implements StandardTokenizationService{
 	@Autowired
 	private DocumentDao documentDao;
 	@Autowired
@@ -74,7 +76,13 @@ public class StandardTokenizationServiceImpl {
 	
 	private HashMap<String, Pattern> patterns = new HashMap<String,Pattern>();
 	
-	public void execute(String sourceId, String file_path, String outputPath) {
+	static final Logger successArticles= Logger.getLogger("successLog");
+	
+	static final Logger errorArticles = Logger.getLogger("errorLog");
+	
+	static final Logger relevantTerms = Logger.getLogger("relevantTerms");
+	
+	public void execute(String sourceId, String file_path, String outputPath, PubMedArticle pubMedArticle) {
 		try {
 			DocumentBuilder dBuilder = XMLUtil.getDocumentBuilder();
 			log.debug(sourceId);
@@ -91,20 +99,30 @@ public class StandardTokenizationServiceImpl {
 		    	stop = System.nanoTime();
 		    	document_model.setExecutionTime((stop-start)/1000000000.0);
 		    	documentDao.save(document_model);
-		    	ResultSummaryUtil.addRelevantArticle(sourceId);
+		    	pubMedArticle.setRelevant(true);
+		    	pubMedArticle.setJsonFindingGenerated(true);
 		    }else {
-		    	ResultSummaryUtil.addNonRelevantArticle(sourceId);
+		    	pubMedArticle.setRelevant(false);
+		    	pubMedArticle.setJsonFindingGenerated(false);
 		    }
-	    }catch (IOException e) {
-	    	ResultSummaryUtil.addArticlesErrors(sourceId);
+		    successArticles.info(sourceId + "\t" + pubMedArticle.getRelevant());
+		    //successArticles.debug(sourceId + "\t" + pubMedArticle.getRelevant());
+		    pubMedArticle.setTokenizationProcessed(true);
+	    }catch (LogicalException e) {
+	    	//ResultSummaryUtil.addArticlesErrors(sourceId);
+	    	errorArticles.info(sourceId);
+	    	log.error("StandardTokenizerServiceImpl :: execute :: Processiong the document " + file_path, e );
+			pubMedArticle.setTokenizationProcessed(false);
+		}catch (IOException e) {
+	    	//ResultSummaryUtil.addArticlesErrors(sourceId);
+			errorArticles.info(sourceId);
 			log.error("StandardTokenizerServiceImpl :: execute :: Processiong the document " + file_path, e );
-			System.out.println(e);
-			e.printStackTrace();
+			pubMedArticle.setTokenizationProcessed(false);
 		} catch (Exception e) {
-			ResultSummaryUtil.addArticlesErrors(sourceId);
+			//ResultSummaryUtil.addArticlesErrors(sourceId);
+			errorArticles.info(sourceId);
 			log.error("StandardTokenizerServiceImpl :: execute :: Processiong the document " + file_path, e );
-			System.out.println(e);
-			e.printStackTrace();
+			pubMedArticle.setTokenizationProcessed(false);
 		}
 	}
 	/**
@@ -243,7 +261,7 @@ public class StandardTokenizationServiceImpl {
 			Integer count = 0;
 			while (m.find()) {
 				count++;
-				log.debug("\t" + m.start() + "\t" + m.end() + "\t" +  sentence.substring(m.start(), m.end()) + "\t" +  keyType);
+				log.info(m.start() + "\t" + m.end() + "\t" +  sentence.substring(m.start(), m.end()) + "\t" +  keyType);
 				//System.out.println("\t" + m.start() + "\t" + m.end() + "\t" +  sentence.substring(m.start(), m.end()));
 			}
 			return count;
@@ -277,6 +295,7 @@ public class StandardTokenizationServiceImpl {
 				}
 				ocurrences.add(new Ocurrence(m.start(), m.end()));
 				log.debug("\t" + m.start() + "\t" + m.end() + "\t" +  sentence.substring(m.start(), m.end()) + "\t" +  keyType);
+				relevantTerms.info(m.start() + "\t" + m.end() + "\t" +  sentence.substring(m.start(), m.end()) + "\t" +  keyType);
 				//System.out.println("\t" + m.start() + "\t" + m.end() + "\t" +  sentence.substring(m.start(), m.end()));
 			}
 			return ocurrences;
@@ -307,6 +326,7 @@ public class StandardTokenizationServiceImpl {
 					List<Ocurrence> ocurrences = sentenceContains(pattern_text, sentence_text, Constants.CYPS_CHEM_PAT_IND);
 					if(ocurrences!=null) {
 						chemicalCompoundCytochromeSentence.setRelationRule(RelationRule.INDUCTION);
+						chemicalCompoundCytochromeSentence.setPattern(pattern);
 						cut=true;
 						break;
 					}
@@ -320,6 +340,7 @@ public class StandardTokenizationServiceImpl {
 						List<Ocurrence> ocurrences = sentenceContains(pattern_text, sentence_text, Constants.CYPS_CHEM_PAT_INH);
 						if(ocurrences!=null) {
 							chemicalCompoundCytochromeSentence.setRelationRule(RelationRule.INHIBITION);
+							chemicalCompoundCytochromeSentence.setPattern(pattern);
 							cut=true;
 							break;
 						}
@@ -334,6 +355,7 @@ public class StandardTokenizationServiceImpl {
 						List<Ocurrence> ocurrences = sentenceContains(pattern_text, sentence_text, Constants.CYPS_CHEM_PAT_MET);
 						if(ocurrences!=null) {
 							chemicalCompoundCytochromeSentence.setRelationRule(RelationRule.METABOLISM);
+							chemicalCompoundCytochromeSentence.setPattern(pattern);
 							cut=true;
 							break;
 						}
@@ -372,6 +394,7 @@ public class StandardTokenizationServiceImpl {
 					List<Ocurrence> ocurrences = sentenceContains(pattern_text, sentence_text, Constants.ADVERSE_EFFECT);
 					if(ocurrences!=null) {
 						hepatotoxicityTermChemicalCompoundSentence.setRelationRule(RelationRule.ADVERSE_EFFECT);
+						hepatotoxicityTermChemicalCompoundSentence.setPattern(pattern);
 						break;
 					}
 				}
@@ -567,7 +590,7 @@ public class StandardTokenizationServiceImpl {
 			Sentence sentence, ChemicalCompound chemicalCompound) {
 		List<Ocurrence> ocurrences = sentenceContains(chemicalCompoundValue, sentence_text, chemicalCompoundValueType);
 		if(ocurrences!=null) {
-			ChemicalCompoundSentence chemicalCompoundSentence = new ChemicalCompoundSentence(chemicalCompound, 1f, ocurrences.size(), ocurrences, sentence);
+			ChemicalCompoundSentence chemicalCompoundSentence = new ChemicalCompoundSentence(chemicalCompound, chemicalCompoundValueType,1f, ocurrences.size(), ocurrences, sentence);
 			sentence.getChemicalCompoundSentences().add(chemicalCompoundSentence);
 		}
 	}

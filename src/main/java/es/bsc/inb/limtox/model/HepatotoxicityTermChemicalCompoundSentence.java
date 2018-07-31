@@ -16,6 +16,9 @@ public class HepatotoxicityTermChemicalCompoundSentence {
 	
 	private Integer quantity;
 	
+	private ChemicalCompoundHepatotoxicityTermPattern pattern;
+	
+	
 	@JsonIgnore
 	private Sentence sentence;
 		
@@ -86,6 +89,15 @@ public class HepatotoxicityTermChemicalCompoundSentence {
 		this.relationRule = relationRule;
 	}
 
+	public ChemicalCompoundHepatotoxicityTermPattern getPattern() {
+		return pattern;
+	}
+
+	public void setPattern(ChemicalCompoundHepatotoxicityTermPattern pattern) {
+		this.pattern = pattern;
+	}
+
+	
 	
 	
 }

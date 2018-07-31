@@ -8,4 +8,5 @@ public interface GenericRetrievalDao {
 
 	public List<PubMedArticle> findAllPubMedArticleToProcess();
 	
+	public PubMedArticle save(PubMedArticle pubMedArticle);
 }

@@ -8,4 +8,6 @@ public interface GenericRetrievalService {
 
 	public List<PubMedArticle> findAllPubMedArticleToProcess();
 	
+	public PubMedArticle save(PubMedArticle pubMedArticle);
+	
 }

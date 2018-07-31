@@ -16,6 +16,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.bsc.inb.limtox.daos.GenericDao;
+import es.bsc.inb.limtox.exceptions.LogicalException;
 import es.bsc.inb.limtox.model.LimtoxEntity;
 
 @PropertySource({ "classpath:limtox.properties" })
@@ -87,7 +88,7 @@ public abstract class GenericDaoJSONImpl<T extends LimtoxEntity> implements Gene
     }
     
 	@Override
-    public T save(final T document) {
+    public T save(final T document) throws LogicalException {
     	return null;
     }
     

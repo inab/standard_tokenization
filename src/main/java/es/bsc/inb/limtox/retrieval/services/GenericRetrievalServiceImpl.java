@@ -18,4 +18,12 @@ public class GenericRetrievalServiceImpl implements GenericRetrievalService{
 		
 	}
 
+	@Override
+	public PubMedArticle save(PubMedArticle pubMedArticle) {
+		return genericRetrievalDao.save(pubMedArticle);
+		
+	}
+	
+	
+	
 }

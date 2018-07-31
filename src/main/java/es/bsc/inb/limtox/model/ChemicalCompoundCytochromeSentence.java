@@ -17,7 +17,9 @@ public class ChemicalCompoundCytochromeSentence {
 	private Integer quantity;
 	@JsonIgnore
 	private Sentence sentence;
-		
+	
+	private CytochromeChemicalCompoundPattern pattern;
+	
 	public ChemicalCompoundCytochromeSentence() {}
 	
 	public ChemicalCompoundCytochromeSentence(ChemicalCompound chemicalCompound, Cytochrome cytochrome,Float score, Integer quantity, Sentence sentence) {
@@ -83,6 +85,18 @@ public class ChemicalCompoundCytochromeSentence {
 	public void setRelationRule(RelationRule relationRule) {
 		this.relationRule = relationRule;
 	}
+
+	public CytochromeChemicalCompoundPattern getPattern() {
+		return pattern;
+	}
+
+	public void setPattern(CytochromeChemicalCompoundPattern pattern) {
+		this.pattern = pattern;
+	}
+	
+	
+
+	
 
 	
 	

@@ -2,6 +2,7 @@ package es.bsc.inb.limtox.daos;
 
 import java.util.List;
 
+import es.bsc.inb.limtox.exceptions.LogicalException;
 import es.bsc.inb.limtox.model.LimtoxEntity;
 
 public interface GenericDao<T extends LimtoxEntity> {
@@ -16,5 +17,5 @@ public interface GenericDao<T extends LimtoxEntity> {
     
     public List<T> findAll();
     
-    public T save(T t);
+    public T save(T t) throws LogicalException;
 }

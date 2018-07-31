@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
  *
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class CytochromeChemicalCompoundInductionPattern implements LimtoxEntity{
+public class CytochromeChemicalCompoundInductionPattern extends CytochromeChemicalCompoundPattern implements LimtoxEntity{
 	
 	private Integer id;
 	

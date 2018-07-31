@@ -22,6 +22,15 @@ public class PubMedArticle {
 	@Column(name="txt")
 	private Boolean plainTextGenerated;
 	
+	@Column(name="json")
+	private Boolean jsonFindingGenerated;
+	
+	@Column(name="relevant")
+	private Boolean relevant;
+	
+	@Column(name="tokenization_processed")
+	private Boolean tokenizationProcessed;
+	
 	public Integer getId() {
 		return id;
 	}
@@ -61,9 +70,30 @@ public class PubMedArticle {
 	public void setFileName(String fileName) {
 		this.fileName = fileName;
 	}
-	
-	
-	
+
+	public Boolean getJsonFindingGenerated() {
+		return jsonFindingGenerated;
+	}
+
+	public void setJsonFindingGenerated(Boolean jsonFindingGenerated) {
+		this.jsonFindingGenerated = jsonFindingGenerated;
+	}
+
+	public Boolean getRelevant() {
+		return relevant;
+	}
+
+	public void setRelevant(Boolean relevant) {
+		this.relevant = relevant;
+	}
+
+	public Boolean getTokenizationProcessed() {
+		return tokenizationProcessed;
+	}
+
+	public void setTokenizationProcessed(Boolean tokenizationProcessed) {
+		this.tokenizationProcessed = tokenizationProcessed;
+	}
 	
 	
 	

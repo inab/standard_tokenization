@@ -8,7 +8,7 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
  *
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class CytochromeChemicalCompoundMetabolismPattern implements LimtoxEntity{
+public class CytochromeChemicalCompoundMetabolismPattern extends CytochromeChemicalCompoundPattern implements LimtoxEntity{
 	
 	private Integer id;
 	
